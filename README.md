@@ -1,0 +1,1 @@
+Observation bot is a Discord bot to moderate your servers
