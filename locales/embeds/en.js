@@ -45,7 +45,7 @@ module.exports = {
     getInfoEmbed: function (users, servers, uptime) {
         const embed = new Discord.RichEmbed({
 			author: {
-				name: "Crédits:",
+				name: "Credit:",
 				icon_url: logoURL
 			},
             color: blue,
