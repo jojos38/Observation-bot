@@ -17,7 +17,7 @@ module.exports = {
     },
 
     // ------------- COMMANDS ------------- //
-    getHelpEmbed: function () {
+    getHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
             color: orange,
             author: {
@@ -26,15 +26,15 @@ module.exports = {
             },
             fields: [
                 {
-                    name: "**!ohelp** ou !jh",
+                    name: prefix + "**help** ou " + prefix + "h",
                     value: " - Affiche l\'aide"
                 },
                 {
-                    name: "**!oinfo**",
+                    name: prefix + "**info**",
                     value: " - Affiche les crédits"
                 },
                 {
-                    name: "**!oadmin**",
+                    name: prefix + "**admin**",
                     value: " - Affiche la liste des commandes administrateur\n**Note :** Nécessite la permission de gérer le serveur"
                 }
             ]
@@ -72,7 +72,7 @@ module.exports = {
         return embed;
     },
 	
-    getAdminHelpEmbed: function () {
+    getAdminHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
             description: "Un 'channel autorisé' est un channel ou le bot modérera",
             color: orange,
@@ -82,44 +82,52 @@ module.exports = {
             },
             fields: [
 				{
-					name: "!oprefix",
+					name: prefix + "prefix",
 					value: "Changer le préfix du bot"
 				},
 				{
-                    name: "!jlang [langue]",
+                    name: prefix + "!jlang [langue]",
                     value: " - Change la langue du bot (langues disponibles: french / english)"
                 },
                 {
-                    name: "!oadd",
+                    name: prefix + "add",
                     value: "Ajoute le channel où est lancé la commande dans la liste des channel autorisés\n**Note** : Si aucun channel n'est spécifié, tous les channels seront autorisés"
                 },
                 {
-                    name: "!oremove",
+                    name: prefix + "remove",
                     value: "Retire le channel où est lancé la commande de la liste des channels autorisés"
                 },
                 {
-                    name: "!oreset",
+                    name: prefix + "reset",
                     value: "Supprime toutes les données de configuration du serveur (la liste des channels autorisés etc...)\n**Attention :** Cette commande supprime également toutes les statistiques des utilisateurs !"
                 },
                 {
-                    name: "!ochannels",
+                    name: prefix + "channels",
                     value: "Affiche la liste des channels autorisés"
                 },
 				{
-                    name: "!odelay",
-                    value: "Défini le délai avant le suppression du message d'avertissement (entre 1000ms and 10000ms)"
+                    name: prefix + "delay",
+                    value: "Défini le délai avant le suppression du message d'avertissement (entre 1000ms and 30000ms)"
                 },
 				{
-                    name: "!odelete",
+                    name: prefix + "delete",
                     value: "Défini si les messages doivent être supprimés (true ou false)"
                 },
 				{
-                    name: "!odebug",
+                    name: prefix + "debug",
                     value: "Affiche les informations de débogage (true ou false)"
                 },
 				{
-                    name: "!owarn",
+                    name: prefix + "warn",
                     value: "Affiche les messages d'avertissement (true ou false)"
+                },
+				{
+                    name: prefix + "global",
+                    value: "Défini si le bot devrait modérer tous les channels du serveur ou non (true ou false)"
+                },
+				{
+                    name: prefix + "whitelist / blacklist [add / remove] [a word]",
+                    value: "Si aucun paramètre, affiche la liste, si add ou remove suivi par un mot, ajoute ou retire ce dernier de la liste.\nExemple: whitelist add I like train"
                 }
             ]
         });
@@ -129,8 +137,10 @@ module.exports = {
 	getWarnEmbed: function (result, debug) {
 		var finalString = "";
 		for(let type in result.values) {
-			if (debug) finalString = finalString + "- " + type + " " + result.values[type]/10 + "%\n";
-			else finalString = finalString + "- " + type + "\n";
+			//if (debug)
+				finalString = finalString + "- " + type + " " + result.values[type]/10 + "%\n";
+			//else
+			//	finalString = finalString + "- " + type + "\n";
 		}
 		const embed = new Discord.RichEmbed({
             color: red,

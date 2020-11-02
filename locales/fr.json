@@ -21,5 +21,13 @@
 	"debugSet": "Les informations de débogage on été définies sur {{defined}}",
 	"debugError": "Erreur, la valeur doit être true ou false",
 	"warnSet": "Les messages d'avertissement ont été définis sur {{defined}}",
-	"warnError": "Erreur, la valeur doit être true ou false"
+	"warnError": "Erreur, la valeur doit être true ou false",
+	"globalSet": "L'obervation globale du bot a été définie sur {{defined}}",
+	"globalError": "Erreur, la valeur doit être true ou false",
+	"listSet": "Le mot {{word}} a été ajouté à la {{list}}",
+	"listRemove": "Le mot {{word}} a été retiré de la {{list}}",
+	"listContainsError": "Erreur, le mot {{word}} est déjà dans la {{list}}",
+	"listRemoveError": "Erreur, le mot {{word}} n'est pas dans la {{list}}",
+	"listEmpty": "La {{list}} est vide",
+	"wordIncorrect": "Le mot doit faire minimum 3 caractères et au maximum 32 caractères."
 }

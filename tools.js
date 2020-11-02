@@ -2,32 +2,69 @@
 // -------------------- SOME VARIABLES -------------------- //
 const i18n = require("i18n");
 const logger = require('./logger.js');
-i18n.configure({
-    //locales:['en', 'fr'],
-    directory: __dirname + '/locales',
-	extension: '.json',
-});
+var embeds;
+var detections;
 // -------------------- SOME VARIABLES -------------------- //
 
-
-
-function getEmbeds() {
-	const eb = {};
-	const langs = i18n.getLocales();
-	langs.forEach(language => {
-		eb[language] = require('./locales/embeds/' + language + '.js');
+function loadEmbeds() {
+	let eb = {};
+	let locales = i18n.getLocales();
+	locales.forEach(language => {
+		try {
+			eb[language] = require('./locales/embeds/' + language + '.js');
+		} catch (error) {
+			logger.error("Error while loading embed file for language " + language);
+			return null;
+		}
 	});
+	logger.success("Loaded embeds languages: " + locales);
 	return eb;
 }
 
-
+function loadDetections() {
+	let detections = {};
+	let locales = i18n.getLocales();
+	locales.forEach(language => {
+		try {
+			detections[language] = require('./locales/detection/' + language + '.js');
+		}
+		catch (error) {
+			logger.error("Error while loading detection file for language " + language);
+			return null;
+		}
+	});
+	logger.success("Loaded detection languages: " + locales);
+	return detections;
+}
 
 module.exports = {
+	loadLanguages: function() {
+		logger.info("Loading languages...");
+		i18n.configure({
+			//locales:['en', 'fr'],
+			directory: __dirname + '/locales',
+			extension: '.json',
+		});
+		detections = loadDetections();
+		embeds = loadEmbeds();
+		if (detections == null || embeds == null) {
+			logger.error("Error while loading languages");
+			process.exit(1);
+		}
+		logger.success("Loaded languages: " + i18n.getLocales());
+	},
+	
 	getLocales: function() {
 		return i18n.getLocales();
 	},
 
-	embeds: getEmbeds(),
+	getEmbeds: function() {
+		return embeds;
+	},
+	
+	getDetections: function() {
+		return detections;
+	},
 	
 	shuffle: function(a) {
 		var j, x, i;

@@ -16,12 +16,16 @@ module.exports = {
     // ------------------------------------- INIT AND CLOSE ------------------------------------- //
     init: function () {
         return new Promise(function (resolve, reject) {
+			logger.info("Database connection...");
             const url = 'mongodb://' + username + ':' + password + '@' + ip + ':' + port + '/' + database + '?authSource=admin';
             MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, poolSize: 1 }, function (err, tempClient) {
-                if (err) throw err;
+                if (err) {
+					logger.error(err);
+					process.exit(1);
+				}
                 client = tempClient;
                 mainDB = client.db(database);
-                logger.info("Database ready");
+                logger.success("Database ready");
                 resolve();
             });
         });
@@ -29,7 +33,7 @@ module.exports = {
 	
     close: function () {
         client.close();
-		logger.info("Database closed");
+		logger.success("Database closed");
     },
     // ------------------------------------- INIT AND CLOSE ------------------------------------- //
 
@@ -47,7 +51,7 @@ module.exports = {
 						resolve();
 					} else {
 						if (channel) tools.sendCatch(channel, tools.getString("resettedError", lang));
-						reject(err);
+						logger.error(err);
 					}
 				});
 			}

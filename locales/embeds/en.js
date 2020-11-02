@@ -17,7 +17,7 @@ module.exports = {
     },
 
     // ------------- COMMANDS ------------- //
-    getHelpEmbed: function () {
+    getHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
             color: orange,
             author: {
@@ -26,15 +26,15 @@ module.exports = {
             },
             fields: [
                 {
-                    name: "**!ohelp** or !oh",
+                    name: prefix + "**help** or " + prefix +  "h",
                     value: " - Show help"
                 },
                 {
-                    name: "**!oinfo**",
+                    name: prefix + "**info**",
                     value: " - Show informations about the bot"
                 },
                 {
-                    name: "**!oadmin**",
+                    name: prefix + "**admin**",
                     value: " - Show admin commands\n**Note :** Require 'manage server' permission"
                 }
             ]
@@ -72,7 +72,7 @@ module.exports = {
         return embed;
     },
 
-    getAdminHelpEmbed: function () {
+    getAdminHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
             description: "An authorized channel is a channel where bot commands are allowed.",
             color: orange,
@@ -82,44 +82,52 @@ module.exports = {
             },
             fields: [
 				{
-					name: "!oprefix",
+					name: prefix + "prefix",
 					value: "Change the bot prefix"
 				},
 				{
-                    name: "!olang [language]",
+                    name: prefix + "lang [language]",
                     value: " - Change the language of the bot (languages available: french / english)"
                 },	
                 {
-                    name: "!oadd",
+                    name: prefix + "add",
                     value: "Add the current channel in the authorized channels"
                 },
                 {
-                    name: "!oremove",
+                    name: prefix + "remove",
                     value: "Remove the current channel from the authorized channels"
                 },
                 {
-                    name: "!oreset",
-                    value: "Delete all bot data from the server (Authorized channels etc...)\n**Warning :** This command also delete all players stats!"
+                    name: prefix + "reset",
+                    value: "Delete all bot data from the server (Authorized channels etc...)\n**Warning :** This command also delete all users stats!"
                 },
                 {
-                    name: "!ochannels",
+                    name: prefix + "channels",
                     value: "Show all authorized channels"
                 },
 				{
-                    name: "!odelay",
-                    value: "Set the delay before the warning message is deleted (between 1000ms and 10000ms)"
+                    name: prefix + "delay",
+                    value: "Set the delay before the warning message is deleted (between 1000ms and 30000ms)"
                 },
 				{
-                    name: "!odelete",
-                    value: "Define either the message should be deleted or not (true ou false)"
+                    name: prefix + "delete",
+                    value: "Define either the message should be deleted or not (true or false)"
                 },
 				{
-                    name: "!odebug",
-                    value: "Show debbuging information (true ou false)"
+                    name: prefix + "debug",
+                    value: "Show debbuging information (true or false)"
                 },
 				{
-                    name: "!owarn",
-                    value: "Show warning messages (true ou false)"
+                    name: prefix + "warn",
+                    value: "Show warning messages (true or false)"
+                },
+				{
+                    name: prefix + "global",
+                    value: "Set if the bot should moderate every channels of the server (true or false)"
+                },
+				{
+                    name: prefix + "whitelist / blacklist [add / remove] [a word]",
+                    value: "If no parameter, shows the list, if add or remove followed by a word, adds or removes this word from the list.\nExample: whitelist add I like train"
                 }
             ]
         });

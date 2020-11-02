@@ -21,5 +21,13 @@
 	"debugSet": "Debugging information have been defined to {{defined}}",
 	"debugError": "Error, the value must be true or false",
 	"warnSet": "Warning messages have been defined to {{defined}}",
-	"warnError": "Error, the value must be true or false"
+	"warnError": "Error, the value must be true or false",
+	"globalSet": "Bot global observation have been defined to {{defined}}",
+	"globalError": "Error, the value must be true or false",
+	"listSet": "The word {{word}} was added to the {{list}}",
+	"listRemove": "The word {{word}} was removed from the {{list}}",
+	"listContainsError": "Error, the word {{word}} is already in the {{list}}",
+	"listRemoveError": "Error, the word {{word}} is not in the {{list}}",
+	"listEmpty": "The {{list}} is empty",
+	"wordIncorrect": "The word must be at least 3 characters and at most 32 characters"
 }

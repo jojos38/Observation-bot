@@ -2,12 +2,6 @@ const logger = require('../../logger.js');
 
 const AVERAGE_TRIGGER = 610;
 
-const whiteList = [
-	'shit',
-	'damn',
-	'crap'
-]
-
 const translationTable = {
 	"SEVERE_TOXICITY": "Severe Toxicity",
 	"TOXICITY": "Toxicity",
@@ -47,13 +41,6 @@ const multiplePercentageTable = {
 module.exports = {
 	analyze: async function (message, debug, perspective) {
 		try {
-			message = message.toLowerCase();
-
-			// White list
-			for(let word of whiteList) {
-				message = message.replace(word, '');
-			}
-
 			// Send request
 			const result = await perspective.analyze(message, {attributes: ['SEVERE_TOXICITY', 'INSULT', 'IDENTITY_ATTACK', 'PROFANITY', 'SEXUALLY_EXPLICIT']});
 
@@ -61,22 +48,22 @@ module.exports = {
 			var total = 0
 
 			// Check each score attribute
-                        var multiple = 0;
-                        for(let type in result.attributeScores) {
-                                let value = Math.round(result.attributeScores[type].spanScores[0].score.value*1000);
-                                total += value;
+			var multiple = 0;
+			for(let type in result.attributeScores) {
+				let value = Math.round(result.attributeScores[type].spanScores[0].score.value*1000);
+				total += value;
 				// If a single value exceed a high value
 				if (value > singlePercentageTable[type]) {
 					score.positive = true;
 					score.values[translationTable[type]] = value;
 				}
 				// If multiple value exceed but lower values
-                                else if (value > multiplePercentageTable[type] || debug) { // Max value is 100
-                                        multiple += 1;
-                                        score.values[translationTable[type]] = value;
-                                }
-                        }
-                        if (multiple >= 2) score.positive = true;
+				else if (value > multiplePercentageTable[type] || debug) { // Max value is 100
+					multiple += 1;
+					score.values[translationTable[type]] = value;
+				}
+            }
+            if (multiple >= 2) score.positive = true;
 
 			// Check message average score
 			var average = total/6;
