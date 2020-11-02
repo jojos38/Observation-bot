@@ -129,8 +129,10 @@ module.exports = {
 	getWarnEmbed: function (result, debug) {
 		var finalString = "";
 		for(let type in result.values) {
-			if (debug) finalString = finalString + "- " + type + " " + result.values[type]/10 + "%\n";
-			else finalString = finalString + "- " + type + "\n";
+			//if (debug)
+				finalString = finalString + "- " + type + " " + result.values[type]/10 + "%\n";
+			//else
+			//	finalString = finalString + "- " + type + "\n";
 		}
 		const embed = new Discord.RichEmbed({
             color: red,

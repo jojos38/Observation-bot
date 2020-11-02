@@ -156,7 +156,7 @@ async function checkMessage(lang ,message) {
 	if (await db.getSetting(guildID, "warnMessage")) {
 		const warnMessage = await tools.sendCatch(message.channel, eb[lang].getWarnEmbed(result, debug));
 		await tools.delay(await db.getSetting(guildID, "deleteDelay"));
-		warnMessage.delete();
+		if (!debug) warnMessage.delete();
 	}
 	
 	
