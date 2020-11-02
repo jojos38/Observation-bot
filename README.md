@@ -74,12 +74,12 @@ An 'Authorized channel' is a channel where the bot is going to operate.
 - !odebug
 - - Show debbuging information (true or false)
 
-!owarn
-Show warning messages (true or false)
+- !owarn
+- - Show warning messages (true or false)
 
-!oglobal
-Set if the bot should moderate every channels of the server (true or false)
+- !oglobal
+- - Set if the bot should moderate every channels of the server (true or false)
 
-!owhitelist / blacklist [add / remove] [a word]
-If no parameter, shows the list, if add or remove followed by a word, adds or removes this word from the list.
-Example: !owhitelist add I like train
+- !owhitelist / blacklist [add / remove] [a word]
+- - If no parameter, shows the list, if add or remove followed by a word, adds or removes this word from the list.
+- - Example: !owhitelist add I like train
