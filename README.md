@@ -30,7 +30,7 @@ Enjoy!
 
 ## User commands
 
-- !ohelp or !oh\
+- !ohelp or !oh
 - - Show help"
 
 - !oinfo
