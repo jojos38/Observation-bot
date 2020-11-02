@@ -87,7 +87,7 @@ module.exports = {
 				},
 				{
                     name: prefix + "lang [language]",
-                    value: " - Change the language of the bot (languages available: french / english)"
+                    value: "Change the language of the bot (languages available: french / english)"
                 },	
                 {
                     name: prefix + "add",

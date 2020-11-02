@@ -241,11 +241,11 @@ client.on('message', async function (message) {
 	// Get guilds settings
 	const prefix = await db.getSetting(guild.id, "prefix") || DEFAULT_PREFIX;
 	const lang = await db.getSetting(guild.id, "lang") || DEFAULT_LANGUAGE;
-	
+
 	// Analyze message
 	var messageLength = message.content.length;
 	if (messageLength >= MIN_MSG_LEN && messageLength <= MAX_MSG_LEN)
-		if (await channelAllowed(guild.id, message))
+		if (await channelAllowed(guild.id, message) || await db.getSetting(guild.id, "global"))
 			checkMessage(lang, message);
 	
 	// Check if it's a command
