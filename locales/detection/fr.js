@@ -36,14 +36,13 @@ module.exports = {
 		try {
 			// Send request
 			const result = await perspective.analyze(message, {attributes: ['SEVERE_TOXICITY', 'TOXICITY', 'IDENTITY_ATTACK_EXPERIMENTAL', 'INSULT_EXPERIMENTAL', 'PROFANITY_EXPERIMENTAL', 'THREAT_EXPERIMENTAL']});
-
 			var score = {positive:false,values:{}};
 			var total = 0
 
 			// Check each score attribute
 			var multiple = 0;
 			for(let type in result.attributeScores) {
-				let value = Math.round(result.attributeScores[type].spanScores[0].score.value*1000);
+				let value = Math.round(result.attributeScores[type].summaryScore.value*1000);
 				total += value;
 				// If a single value exceed a high value
 				if (value > singlePercentageTable[type]) {

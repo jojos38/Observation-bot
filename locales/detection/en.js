@@ -50,7 +50,7 @@ module.exports = {
 			// Check each score attribute
 			var multiple = 0;
 			for(let type in result.attributeScores) {
-				let value = Math.round(result.attributeScores[type].spanScores[0].score.value*1000);
+				let value = Math.round(result.attributeScores[type].summaryScore.value*1000);
 				total += value;
 				// If a single value exceed a high value
 				if (value > singlePercentageTable[type]) {
