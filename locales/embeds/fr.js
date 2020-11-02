@@ -2,7 +2,7 @@
 // ------------------------------------------- SOME VARIABLES ------------------------------------------- //
 const Discord = require('discord.js');
 const logoURL = "https://cdn.discordapp.com/avatars/586183772136013824/60e91b15dec572463835bfb7cbd78ce7.webp?size=128";
-const orange = 16750869;
+const blue = 3447003;
 const red = 15728640;
 // ------------------------------------------- SOME VARIABLES ------------------------------------------- //
 
@@ -19,7 +19,7 @@ module.exports = {
     // ------------- COMMANDS ------------- //
     getHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
-            color: orange,
+            color: blue,
             author: {
                 name: "Voici la liste des commandes disponibles :",
                 icon_url: logoURL
@@ -48,9 +48,9 @@ module.exports = {
 				name: "Crédits :",
 				icon_url: logoURL
 			},
-            color: orange,
+            color: blue,
             title: "Bot crée par jojos38",
-			description: "Lien du bot : https://top.gg/bot/586183772136013824\nMerci à http://www.openquizzdb.org/ pour les questions.\nServeur de support: https://discord.gg/DXpb9DN\nPatreon: https://www.patreon.com/jojos38\nTipeee: https://fr.tipeee.com/jojos38s-quizzar-bot",
+			description: "Merci à Perspective API pour leur API.\nServeur de support: https://discord.gg/DXpb9DN\nPatreon: https://www.patreon.com/jojos38\nTipeee: https://fr.tipeee.com/jojos38s-quizzar-bot",
 			fields: [
 			  {
 				name: "Serveurs",
@@ -75,7 +75,7 @@ module.exports = {
     getAdminHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
             description: "Un 'channel autorisé' est un channel ou le bot modérera",
-            color: orange,
+            color: blue,
             author: {
                 name: "Voici la liste des commandes administrateur :",
                 icon_url: logoURL

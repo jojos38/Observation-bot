@@ -2,7 +2,7 @@
 // ------------------------------------------- SOME VARIABLES ------------------------------------------- //
 const Discord = require('discord.js');
 const logoURL = "https://cdn.discordapp.com/avatars/586183772136013824/60e91b15dec572463835bfb7cbd78ce7.webp?size=128";
-const orange = 16750869;
+const blue = 3447003;
 const red = 15728640;
 // ------------------------------------------- SOME VARIABLES ------------------------------------------- //
 
@@ -19,7 +19,7 @@ module.exports = {
     // ------------- COMMANDS ------------- //
     getHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
-            color: orange,
+            color: blue,
             author: {
                 name: "Here is a list of all commands:",
                 icon_url: logoURL
@@ -48,9 +48,9 @@ module.exports = {
 				name: "Crédits:",
 				icon_url: logoURL
 			},
-            color: orange,
+            color: blue,
             title: "Bot made by jojos38",
-			description: "Link of the bot: Support server: https://discord.gg/DXpb9DN\nPatreon: https://www.patreon.com/jojos38\nTipeee: https://fr.tipeee.com/jojos38s-quizzar-bot",
+			description: "Special thanks to Perspective API for their API. Support server: https://discord.gg/DXpb9DN\nPatreon: https://www.patreon.com/jojos38\nTipeee: https://fr.tipeee.com/jojos38s-quizzar-bot",
 			fields: [
 			  {
 				name: "Servers",
@@ -75,7 +75,7 @@ module.exports = {
     getAdminHelpEmbed: function (prefix) {
         const embed = new Discord.RichEmbed({
             description: "An authorized channel is a channel where bot commands are allowed.",
-            color: orange,
+            color: blue,
             author: {
                 name: "Here is a list of admin commands:",
                 icon_url: logoURL
