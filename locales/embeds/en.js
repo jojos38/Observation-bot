@@ -1,7 +1,7 @@
 
 // ------------------------------------------- SOME VARIABLES ------------------------------------------- //
 const Discord = require('discord.js');
-const logoURL = "https://cdn.discordapp.com/avatars/586183772136013824/60e91b15dec572463835bfb7cbd78ce7.webp?size=128";
+const logoURL = "https://cdn.discordapp.com/avatars/772446137499385866/a5e90de09717b1edc0d00ca03716767b.webp?size=128";
 const blue = 3447003;
 const red = 15728640;
 // ------------------------------------------- SOME VARIABLES ------------------------------------------- //
