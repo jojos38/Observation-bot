@@ -30,15 +30,15 @@ Enjoy!
 
 ## User commands
 
-!ohelp or !oh
-Show help"
+- !ohelp or !oh\
+- - Show help"
 
-!oinfo
-Show information about the bot"
+- !oinfo
+- - Show information about the bot"
 
-!oadmin
-Show admin commands
-Note: Require 'manage server' permission
+- !oadmin
+- - Show admin commands
+- - Note: Require 'manage server' permission
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -46,33 +46,33 @@ Note: Require 'manage server' permission
 
 An 'Authorized channel' is a channel where the bot is going to operate.
 
-!oprefix
-Change the bot prefix
+- !oprefix
+- - Change the bot prefix
 
-!olang [language]
-Change the language of the bot (languages available: french / english)
+- !olang [language]
+- -Change the language of the bot (languages available: french / english)
 
-!oadd
-Add the current channel in the authorized channels
+- !oadd
+- - Add the current channel in the authorized channels
 
-!oremove
-Remove the current channel from the authorized channels
+- !oremove
+- - Remove the current channel from the authorized channels
 
-!oreset
-Delete all bot data from the server (Authorized channels etc...)
-**Warning:** This command also delete all users stats! (Still not implemented)
+- !oreset
+- - Delete all bot data from the server (Authorized channels etc...)
+- - **Warning:** This command also delete all users stats! (Still not implemented)
 
-!ochannels
-Show all authorized channels
+- !ochannels
+- - Show all authorized channels
 
-!odelay
-Set the delay before the warning message is deleted (between 1000ms and 30000ms)
+- !odelay
+- - Set the delay before the warning message is deleted (between 1000ms and 30000ms)
 
-!odelete
-Define either the message should be deleted or not (true or false)
+- !odelete
+- - Define either the message should be deleted or not (true or false)
 
-!odebug
-Show debbuging information (true or false)
+- !odebug
+- - Show debbuging information (true or false)
 
 !owarn
 Show warning messages (true or false)
