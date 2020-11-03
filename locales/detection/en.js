@@ -1,8 +1,7 @@
 const logger = require('../../logger.js');
+const tools = require('../../tools.js');
 
-const AVERAGE_TRIGGER = 610;
-
-const translationTable = {
+const TRANSLATION_TABLE = {
 	"SEVERE_TOXICITY": "Severe Toxicity",
 	"TOXICITY": "Toxicity",
 	"IDENTITY_ATTACK": "Identity Attack",
@@ -14,7 +13,7 @@ const translationTable = {
 	"FLIRTATION": "Flirtation"
 }
 
-const singlePercentageTable = {
+const SINGLE_TRIGGER_TABLE = {
         "SEVERE_TOXICITY": 750,
         "TOXICITY": 900,
         "IDENTITY_ATTACK": 810,
@@ -26,7 +25,7 @@ const singlePercentageTable = {
         "FLIRTATION": 750
 }
 
-const multiplePercentageTable = {
+const MULTIPLE_TRIGGER_TABLE = {
         "SEVERE_TOXICITY": 750,
         "TOXICITY": 900,
         "IDENTITY_ATTACK": 700,
@@ -38,44 +37,67 @@ const multiplePercentageTable = {
         "FLIRTATION": 750
 }
 
+const scan = {
+	comment: {
+		"text":""
+	},
+	requestedAttributes: {
+		"SEVERE_TOXICITY": {},
+		"INSULT": {},
+		"IDENTITY_ATTACK": {},
+		"PROFANITY": {},
+		"SEXUALLY_EXPLICIT": {},
+		"THREAT": {}
+	},
+	languages: [
+		"en"
+	]
+}
+
+const AVERAGE_TRIGGER = 610;
+const MIN_MULTIPLE_TRIGGER = 2;
+const ATTRIBUTES_TOT = tools.objSize(scan.requestedAttributes);
+
 module.exports = {
 	analyze: async function (message, debug, perspective) {
 		try {
 			// Send request
-			const result = await perspective.analyze(message, {attributes: ['SEVERE_TOXICITY', 'INSULT', 'IDENTITY_ATTACK', 'PROFANITY', 'SEXUALLY_EXPLICIT']});
+			scan.comment.text = message;
+			const result = await perspective.analyze(scan);
 
-			var score = {positive:false,values:{}};
+			// Settings
 			var total = 0
-
-			// Check each score attribute
 			var multiple = 0;
+			var score = {positive:false, values:{}, detectedLanguages: result.detectedLanguages};
+			
+			// Check each score attribute
 			for(let type in result.attributeScores) {
 				let value = Math.round(result.attributeScores[type].summaryScore.value*1000);
 				total += value;
 				// If a single value exceed a high value
-				if (value > singlePercentageTable[type]) {
+				if (value > SINGLE_TRIGGER_TABLE[type]) {
 					score.positive = true;
-					score.values[translationTable[type]] = value;
+					score.values[TRANSLATION_TABLE[type]] = value;
 				}
 				// If multiple value exceed but lower values
-				else if (value > multiplePercentageTable[type] || debug) { // Max value is 100
+				else if (value > MULTIPLE_TRIGGER_TABLE[type] || debug) { // Max value is 100
 					multiple += 1;
-					score.values[translationTable[type]] = value;
+					score.values[TRANSLATION_TABLE[type]] = value;
 				}
             }
-            if (multiple >= 2) score.positive = true;
+            if (multiple >= MIN_MULTIPLE_TRIGGER) score.positive = true;
 
 			// Check message average score
-			var average = total/6;
-			if (average > AVERAGE_TRIGGER && !score.positive || debug) { // Max value is 1000
+			var average = total/ATTRIBUTES_TOT;
+			if ((average > AVERAGE_TRIGGER && !score.positive) || debug) { // Max value is 1000
 				score.positive = true;
-				score.values["AVERAGE"] = average;
+				score.values[TRANSLATION_TABLE["AVERAGE"]] = average;
 			}
 
 			return score;
 		} catch (error) {
 			logger.warn(error);
-			return {positive:false};
+			return {positive:false, detectedLanguages:[]};
 		}
 	}
 }

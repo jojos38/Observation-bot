@@ -5,6 +5,7 @@ const config = require('./config.json');
 const { database, username, password, ip, port } = require('./dbconfig.json');
 const tools = require('./tools.js');
 const logger = require('./logger.js');
+const lm = require('./languages-manager.js');
 const eb = tools.embeds;
 var client;
 var mainDB;
@@ -19,14 +20,15 @@ module.exports = {
 			logger.info("Database connection...");
             const url = 'mongodb://' + username + ':' + password + '@' + ip + ':' + port + '/' + database + '?authSource=admin';
             MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, poolSize: 1 }, function (err, tempClient) {
-                if (err) {
+                if (!err) {
+					 client = tempClient;
+					mainDB = client.db(database);
+					logger.success("Database ready");
+					resolve();
+				} else {
 					logger.error(err);
 					process.exit(1);
 				}
-                client = tempClient;
-                mainDB = client.db(database);
-                logger.success("Database ready");
-                resolve();
             });
         });
     },
@@ -43,18 +45,17 @@ module.exports = {
     resetGuildSettings: function (guildID, guildName, channel, lang) {
 		return new Promise(function (resolve, reject) {
 			const guildCollection = mainDB.collection(guildID);
-			if (guildCollection) {
-				guildCollection.drop(function (err, result) {
-					if (!err) {
-						if (channel) tools.sendCatch(channel, tools.getString("resetted", lang));
-						logger.info("Deleted collection from server " + guildName);
-						resolve();
-					} else {
-						if (channel) tools.sendCatch(channel, tools.getString("resettedError", lang));
-						logger.error(err);
-					}
-				});
-			}
+			guildCollection.drop(function (err, result) {
+				if (!err) {
+					if (channel) tools.sendCatch(channel, lm.getString("resetted", lang));
+					logger.info("Deleted collection from server " + guildName);
+					resolve();
+				} else {
+					if (channel) tools.sendCatch(channel, lm.getString("resettedError", lang));
+					logger.error(err);
+					resolve();
+				}
+			});
 		});
     },
 
@@ -62,16 +63,21 @@ module.exports = {
 		const channelID = channel.id;
         const guildCollection = mainDB.collection(channel.guild.id);
         guildCollection.findOne({ channel: channelID }, function (err, result) { // Try to find the channel to add
-            if (result) { // If it already exist
-                tools.sendCatch(channel, tools.getString("alreadyAuthorized", lang));
-                return; // Return if channel already exist
-            }
+            if (!err) {
+				if (result) { // If it already exist
+					tools.sendCatch(channel, lm.getString("alreadyAuthorized", lang));
+					return; // Return if channel already exist
+				}
+			} else {
+				tools.sendCatch(channel, "channelAddedError");
+				logger.error(err);
+			}
             guildCollection.insertOne({ channel: channelID }, function (err, item) { // Insert channel:4891657867278524898
                 if (!err) {
-                    tools.sendCatch(channel, tools.getString("channelAdded", lang));
+                    tools.sendCatch(channel, lm.getString("channelAdded", lang));
                     logger.info("Document { channel:" + channelID + " } inserted successfully");
                 } else {
-                    tools.sendCatch(channel, tools.getString("channelAddedError", lang));
+                    tools.sendCatch(channel, lm.getString("channelAddedError", lang));
                     logger.error(err);
                 }
             });
@@ -82,68 +88,24 @@ module.exports = {
         const channelID = channel.id;
         const guildCollection = mainDB.collection(channel.guild.id);
         guildCollection.findOne({ channel: channelID }, function (err, result) { // Try to find the channel to add
-            if (!result) { // If channel doesn't exist
-                if (!channel.deleted) tools.sendCatch(channel, tools.getString("channelNotInList", lang));
-                return;
-            }
+            if (!err) {
+				if (!result) { // If channel doesn't exist
+					if (!channel.deleted) tools.sendCatch(channel, lm.getString("channelNotInList", lang));
+					return;
+				}
+			} else {
+				tools.sendCatch(channel, lm.getString("channelDeletedError", lang));
+                logger.error(err);
+			}
             guildCollection.deleteOne({ channel: channelID }, function (err, item) { // Delete channel:4891654898
                 if (!err) {
-                    if (!channel.deleted) tools.sendCatch(channel, tools.getString("channelDeleted", lang));
+                    if (!channel.deleted) tools.sendCatch(channel, lm.getString("channelDeleted", lang));
                     logger.info("Document { channel:" + channelID + " } deleted successfully");
                 } else {
-                    if (!channel.deleted) tools.sendCatch(channel, tools.getString("channelDeletedError", lang));
+                    if (!channel.deleted) tools.sendCatch(channel, lm.getString("channelDeletedError", lang));
                     logger.error(err);
                 }
             });
-        });
-    },
-
-    updateUserStats: function (guildID, userID, username, addedScore, addedWon) {
-        const guildCollection = mainDB.collection(guildID);
-        const userToFind = { id: userID };
-		addedScore = Number(addedScore)
-		if (!tools.isInt(addedScore)) { logger.warn("Error hapenned, score or won is not a valid number"); }
-		
-        guildCollection.findOne(userToFind, function (err, result) {
-            if (result) {
-                const finalScore = (addedScore + result.score) || addedScore;
-                const finalWon = (addedWon + result.won) || addedWon;
-				logger.info("Updated user " + username + " [Score: " + result.score + " => " + finalScore + ", " + "Won: " + result.won + " => " + finalWon + "]");
-                guildCollection.updateOne(userToFind, { $set: { id: userID, score: finalScore, won: finalWon } });
-            } else {
-				logger.info("Added user " + username + " [Score: 0 => " + addedScore + ", " + "Won: 0 => " + addedWon + "]");
-                guildCollection.insertOne({ id: userID, username: username, score: addedScore, won: addedWon });
-            }
-        });
-    },
-
-    getUserStats: function (guildID, userID) {
-        return new Promise(async function (resolve, reject) {
-            const guildCollection = mainDB.collection(guildID);
-            guildCollection.findOne({ id: userID }, function (err, userStats) {
-                resolve(userStats);
-            });
-        });
-    },
-
-    getTop: function (guild, channel, lang) {
-        const guildID = guild.id;
-        const guildCollection = mainDB.collection(guildID);
-        guildCollection.find({username: {$exists: true}}, { projection: { _id: 0, id: 1, score: 1, won: 1, username: 1 } }).sort({ score: -1 }).toArray(function (err, statsTable) {
-			var userNumber = 1;
-            var usersString = "";	
-			for (var i = 0; i < statsTable.length; i++) {
-				if (i > 10) break;
-				var user = statsTable[i];
-				var nick;
-				if (guild.members.get(user.id)) nick = guild.members.get(user.id).nickname || guild.members.get(user.id).user.username;
-				else nick = user.username;
-				usersString = usersString + "\n" + "**[ " + (i+1) + " ]** [" + tools.getString("score", lang) + ": " + user.score + "] [" + tools.getString("victory", lang) + ": " + user.won + "] **" + nick + "**";
-			}
-            if (statsTable.length == 0) {
-                usersString = tools.getString("noStats", lang);
-            }
-            tools.sendCatch(channel, eb[lang].getTopEmbed(usersString));
         });
     },
 
@@ -151,7 +113,7 @@ module.exports = {
         return new Promise(function (resolve, reject) {
             const guildCollection = mainDB.collection(guildID);
             guildCollection.find({channel: {$exists: true}}, { projection: { _id: 0, channel: 1 } }).toArray(function (err, result) {
-                if (err) throw err;
+                if (err) logger.error(err);
                 resolve(result);
             });
         });
@@ -162,13 +124,14 @@ module.exports = {
             const guildCollection = mainDB.collection(guildID);
             const settingToFind = { setting: settingName };
             guildCollection.findOne(settingToFind, function (err, result) {
-                if (result) {
-                    guildCollection.updateOne(settingToFind, { $set: { value: value } });
-                    resolve();
-                } else {
-                    guildCollection.insertOne({ setting: settingName, value: value });
-                    resolve();
-                }
+				if (err) logger.error(err);
+				if (result) {
+					guildCollection.updateOne(settingToFind, { $set: { value: value } });
+					resolve();
+				} else {
+					guildCollection.insertOne({ setting: settingName, value: value });
+					resolve();
+				}
             });
         });
     },
@@ -177,7 +140,8 @@ module.exports = {
         return new Promise(async function (resolve, reject) {
             const guildCollection = mainDB.collection(guildID);
             guildCollection.findOne({ setting: settingName }, function (err, setting) {
-                if (setting) {
+                if (err) logger.error(err);
+				if (setting) {
                     resolve(setting.value);
                 } else {
                     resolve(setting);
@@ -189,6 +153,7 @@ module.exports = {
 	getAllServers: function () {
 		return new Promise(async function (resolve, reject) {
 			mainDB.listCollections().toArray(function(err, collInfos) {
+				if (err) logger.error(err);
 				resolve(collInfos);
 			});
 		});
