@@ -28,8 +28,9 @@ async function getChannelsString(guildID, lang) {
 	const channels = await db.getGuildChannels(guildID)
 	var channelsString = "";
 	// Loop trough each channel and add them to a string
-	for (var i = 0; i < channels.length; i++)
-		channelsString = channelsString + "\n" + tools.mention(channels[i].channel, 'c');
+	for (var i = 0; i < channels.length; i++) {
+		channelsString = channelsString + "\n" + tools.mention(channels[i].channel, 'c') + " [" + channels[i].lang + "]";
+	}
 	// If the string is empty, mean there was no channel
 	if (channelsString == "") channelsString = lm.getString("noChannel", lang);
 	return channelsString;
@@ -132,7 +133,12 @@ async function checkMessage(lang, message, debug) {
 	// Values
 	const guildID = message.guild.id;
 	var messageContent = message.content.toLowerCase();;
-	
+
+	// Check channel lang
+	const channelLang = await db.getChannelLang(message.guild.id, message.channel.id);
+	if (channelLang != "auto")
+		lang = channelLang;
+
 	// Remove emotes from the message
 	var emotes = messageContent.match(/<:.+?:\d+>/g);
 	if (emotes) {
@@ -140,19 +146,21 @@ async function checkMessage(lang, message, debug) {
 			messageContent = messageContent.replace(emote, "");
 		}
 	}
-	
+
 	// Remove white-list words
 	const whitelist = await db.getSetting(guildID, "whitelist");
-	for(let word of whitelist) {
-		messageContent = messageContent.replace(word, '');
-	}
-	
+	if (whitelist)
+		for(let word of whitelist) {
+			messageContent = messageContent.replace(word, '');
+		}
+
 	// Check black-list words
 	var blacklistPass = true;
 	const blacklist = await db.getSetting(guildID, "blacklist");
-	for(let word of blacklist) {
-		if (messageContent.includes(word)) blacklistPass = false;
-	}
+	if (blacklist)
+		for(let word of blacklist) {
+			if (messageContent.includes(word)) blacklistPass = false;
+		}
 
 	// Check message
 	var result;
@@ -163,11 +171,11 @@ async function checkMessage(lang, message, debug) {
 	if (blacklistPass) {
 		// Increment counter
 		db.incrementCounter();
-		
+
 		// Send the message to the API
 		result = await lm.analyze(lang, messageContent, debug);
 		if (result.positive) positive = true;
-		
+
 		// If the API detected the message as another language, then we check for this language too
 		if (!positive) {
 			for(let language of result.detectedLanguages) {
@@ -311,6 +319,18 @@ client.on('message', async function (message) {
 		return;
     }
 	
+	else if (messageContent.startsWith(`${prefix}channellang`)) { // remove [ADMIN]
+		const langs = lm.getLocales();
+		const commandLang = (args[1] || "");
+		if (langs.includes(commandLang) || commandLang == "auto") {
+			db.setChannelLang(guild.id, channel.id, commandLang);
+			tools.sendCatch(channel, lm.getString("langSet", lang, {lang:commandLang}));
+		} else {
+			tools.sendCatch(channel, lm.getString("langError", lang, {lang:commandLang, langs:langs}));
+		}
+		return;
+    }
+	
     else if (messageContent.startsWith(`${prefix}delay`)) { // delete delay [ADMIN]
 		if (args[1] <= 30000 && args[1] >= 1000 && tools.isInt(args[1])) {
 			db.setSetting(guild.id, "deleteDelay", args[1]);
@@ -393,13 +413,13 @@ client.on('message', async function (message) {
     }
 
     else if (messageContent.startsWith(`${prefix}channels`)) { // remove [ADMIN]
-		tools.sendCatch(channel, getChannelsString(guild.id, lang));
+		tools.sendCatch(channel, await getChannelsString(guild.id, lang));
 		return;
     }
 
 	else if (messageContent.startsWith(`${prefix}lang`)) { // lang [ADMIN]
 		const langs = lm.getLocales();
-		const commandLang = (args[1] || "").substring(0, 2);
+		const commandLang = (args[1] || "");
 		if (langs.includes(commandLang)) {
 			db.setSetting(guild.id, "lang", commandLang);
 			tools.sendCatch(channel, lm.getString("langSet", lang, {lang:commandLang}));
@@ -439,6 +459,10 @@ client.on('message', async function (message) {
 		logger.debug("Total users: " + users);
 		logger.debug("Total servers: " + servers.size);
 		logger.debug("English:" + ratioEN + "% (" + en + ") French:" + ratioFR + "% (" + (servers.size-en) + ")"); 
+    }
+
+	else if (messageContent.startsWith(`${prefix}reload`)) { // kill [OWNER]
+		lm.reloadLanguages();
     }
 
     else if (messageContent.startsWith(`${prefix}kill`)) { // kill [OWNER]
@@ -503,6 +527,7 @@ client.on('message', async function (message) {
 // ------- START ------- //
 async function start() {
     await db.init();
+	lm.reloadLanguages(); // Load languages
 	logger.info("Connecting to Discord...");
     client.login(config.token);
 	//dbl.init(client);

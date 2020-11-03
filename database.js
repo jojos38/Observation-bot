@@ -72,10 +72,10 @@ module.exports = {
 				tools.sendCatch(channel, "channelAddedError");
 				logger.error(err);
 			}
-            guildCollection.insertOne({ channel: channelID }, function (err, item) { // Insert channel:4891657867278524898
+            guildCollection.insertOne({ channel: channelID, lang: "auto" }, function (err, item) { // Insert channel:4891657867278524898
                 if (!err) {
                     tools.sendCatch(channel, lm.getString("channelAdded", lang));
-                    logger.info("Document { channel:" + channelID + " } inserted successfully");
+                    logger.info("Document channel inserted successfully");
                 } else {
                     tools.sendCatch(channel, lm.getString("channelAddedError", lang));
                     logger.error(err);
@@ -112,9 +112,37 @@ module.exports = {
     getGuildChannels: function (guildID) {
         return new Promise(function (resolve, reject) {
             const guildCollection = mainDB.collection(guildID);
-            guildCollection.find({channel: {$exists: true}}, { projection: { _id: 0, channel: 1 } }).toArray(function (err, result) {
+            guildCollection.find({channel: {$exists: true}}, { projection: { _id: 0} }).toArray(function (err, result) {
                 if (err) logger.error(err);
                 resolve(result);
+            });
+        });
+    },
+	
+    getChannelLang: function (guildID, channelID) {
+        return new Promise(async function (resolve, reject) {
+            const guildCollection = mainDB.collection(guildID);
+            guildCollection.findOne({ channel: channelID }, function (err, channel) {
+                if (err) logger.error(err);
+				if (channel) {
+                    resolve(channel.lang);
+                } else {
+					resolve({});
+				}
+            });
+        });
+    },
+	
+	setChannelLang: function (guildID, channelID, lang) {
+        return new Promise(async function (resolve) {
+            const guildCollection = mainDB.collection(guildID);
+            const channelToFind = { channel: channelID };
+            guildCollection.findOne(channelToFind, function (err, result) {
+				if (err) logger.error(err);
+				if (result) {
+					guildCollection.updateOne(channelToFind, { $set: { lang: lang } });
+					resolve();
+				}
             });
         });
     },

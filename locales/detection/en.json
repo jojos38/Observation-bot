@@ -1,0 +1,54 @@
+{
+	"average_trigger": 610,
+	"min_multiple_trigger": 2,
+	"translationTable": {
+		"SEVERE_TOXICITY": "Severe Toxicity",
+		"TOXICITY": "Toxicity",
+		"IDENTITY_ATTACK": "Identity Attack",
+		"INSULT": "Insult",
+		"PROFANITY": "Profanity",
+		"THREAT": "Threat",
+		"SEXUALLY_EXPLICIT": "Sexually Explicit",
+		"INCOHERENT": "Incoherent",
+		"FLIRTATION": "Flirtation",
+		"AVERAGE": "Multiples"
+	},
+	"singleTriggerTable": {
+		"SEVERE_TOXICITY": 750,
+		"TOXICITY": 900,
+		"IDENTITY_ATTACK": 810,
+		"INSULT": 920,
+		"PROFANITY": 900,
+		"THREAT": 750,
+		"SEXUALLY_EXPLICIT": 900,
+		"INCOHERENT": 750,
+		"FLIRTATION": 750
+	},
+	"multipleTriggerTable": {
+		"SEVERE_TOXICITY": 750,
+		"TOXICITY": 900,
+		"IDENTITY_ATTACK": 700,
+		"INSULT": 920,
+		"PROFANITY": 850,
+		"THREAT": 750,
+		"SEXUALLY_EXPLICIT": 800,
+		"INCOHERENT": 750,
+		"FLIRTATION": 750
+	},
+	"scan": {
+		"comment": {
+			"text": ""
+		},
+		"requestedAttributes": {
+			"SEVERE_TOXICITY": {},
+			"INSULT": {},
+			"IDENTITY_ATTACK": {},
+			"PROFANITY": {},
+			"SEXUALLY_EXPLICIT": {},
+			"THREAT": {}
+		},
+		"languages": [
+			"en"
+		]
+	}
+}
