@@ -1,4 +1,5 @@
 const logger = require('../../logger.js');
+const tools = require('../../tools.js');
 
 const AVERAGE_TRIGGER = 610;
 
@@ -38,13 +39,31 @@ const multiplePercentageTable = {
         "FLIRTATION": 750
 }
 
+const scan = {
+	comment: {
+		"text":""
+	},
+	requestedAttributes: {
+		"SEVERE_TOXICITY": {},
+		"INSULT": {},
+		"IDENTITY_ATTACK": {},
+		"PROFANITY": {},
+		"SEXUALLY_EXPLICIT": {},
+		"THREAT": {}
+	},
+	languages: [
+		"en"
+	]
+}
+
 module.exports = {
 	analyze: async function (message, debug, perspective) {
 		try {
 			// Send request
-			const result = await perspective.analyze(message, {attributes: ['SEVERE_TOXICITY', 'INSULT', 'IDENTITY_ATTACK', 'PROFANITY', 'SEXUALLY_EXPLICIT']});
+			scan.comment.text = message;
+			const result = await perspective.analyze(scan);
 
-			var score = {positive:false,values:{}};
+			var score = {positive:false, values:{}, detectedLanguages: result.detectedLanguages};
 			var total = 0
 
 			// Check each score attribute
@@ -75,7 +94,7 @@ module.exports = {
 			return score;
 		} catch (error) {
 			logger.warn(error);
-			return {positive:false};
+			return {positive:false, detectedLanguages:[]};
 		}
 	}
 }

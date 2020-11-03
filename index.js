@@ -10,70 +10,62 @@ const ACTIVITY_MESSAGE = "!ohelp";
 
 
 // -------------------- SOME VARIABLES -------------------- //
-const { token, topggtoken, apikey } = require('./config.json');
+global.config = require('./config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-//const DBL = require("dblapi.js");
-//const dbl = new DBL(topggtoken, client);
 const tools = require('./tools.js');
 const db = require('./database.js');
 const logger = require('./logger.js');
-const perspectiveClient = require('perspective-api-client');
-const perspective = new perspectiveClient({apiKey: apikey});
-var eb; // Initialized in start()
-var detections; // Initialized in start()
+const lm = require('./languages-manager.js');
+const dbl = require('./dbl.js');
 // -------------------- SOME VARIABLES -------------------- //
 
 
 
 // ----------------------------------- SOME FUNCTIONS ----------------------------------- //
 // Return a string of all the channels the bot is allowed to use
-function getChannelsString(channels, lang) {
+async function getChannelsString(guildID, lang) {
+	const channels = await db.getGuildChannels(guildID)
 	var channelsString = "";
-	// Loop trough each channe and add them to a string
-	for (var i = 0; i < channels.length; i++) {
+	// Loop trough each channel and add them to a string
+	for (var i = 0; i < channels.length; i++)
 		channelsString = channelsString + "\n" + tools.mention(channels[i].channel, 'c');
-	}
 	// If the string is empty, mean there was no channel
-	if (channelsString == "") channelsString = tools.getString("noChannel", lang);
+	if (channelsString == "") channelsString = lm.getString("noChannel", lang);
 	return channelsString;
 }
 
 async function channelAllowed(guildID, message) {
-	// Channel perms
 	const channels = await db.getGuildChannels(guildID);
 	const channelID = message.channel.id;
-	for (var i = 0; i < channels.length; i++) { // For each channel
-		// If message is sent from allowed channel then return
-		if (channels[i].channel == channelID) return true;
-	}
+	for (var i = 0; i < channels.length; i++) // For each channel
+		if (channels[i].channel == channelID) return true; // If message is sent from allowed channel then return
 	return false;
 }
 
-async function isAllowed(message, admin, lang) {
-	if (!message) return false;
-	const member = message.member || message.guild.member(message.author);
-	if (!member) return false;
-
+async function isAllowed(message, lang) {
 	// Owner perms
 	if (message.author.id == OWNER_ID) return true;
 
-	// Admin perms
-	if (member.hasPermission("MANAGE_GUILD")) {
-		return true;
-	} else {
-		if (admin) {
-			tools.sendCatch(message.channel, tools.getString("noPermission", lang));
-			return false;
-		}
-	}
+	// Moderator perms
+	if (isModeratorAllowed(message)) return true;
 
 	// Channel perm
 	if (channelAllowed(message.guild.id)) return true;
 
 	// If we went there is that the user is not allowed since previous for loop should return
-	tools.sendCatch(message.channel, eb[lang].getNotAllowedEmbed(getChannelsString(channels, lang)));
+	tools.sendCatch(message.channel, lm.getEb(lang).getNotAllowedEmbed(getChannelsString(channels, lang)));
 	return false;
+}
+
+async function isModeratorAllowed(message) {
+	// Checking
+	if (!message) return false;
+	const member = message.member || message.guild.member(message.author);
+	if (!member) return false;
+	
+	// Admin perms
+	return member.hasPermission("MANAGE_GUILD");
 }
 
 function initSettings(guild) {
@@ -118,21 +110,13 @@ client.once('ready', async function () {
     client.user.setActivity(ACTIVITY_MESSAGE);
 });
 
-/*dbl.on('posted', () => {
-	logger.info('Server count posted');
-})
-
-dbl.on('error', e => {
-	logger.error(`Error while posting server count ${e}`);
-})*/
-
 client.on("channelDelete", function (channel) {
     db.removeGuildChannel(channel, DEFAULT_LANGUAGE);
 });
 
 client.on("guildCreate", guild => {
 	logger.info("New server: " + guild.name);
-	try { guild.owner.send(tools.getString("thanks", DEFAULT_LANGUAGE)); }
+	try { guild.owner.send(lm.getString("thanks", DEFAULT_LANGUAGE)); }
 	catch (error) { logger.error("Error while sending a PM to the user"); logger.error(error); }
 	initSettings(guild);
 });
@@ -144,10 +128,9 @@ client.on("guildDelete", guild => {
    }
 });
 
-async function checkMessage(lang, message) {	
+async function checkMessage(lang, message, debug) {	
 	// Values
 	const guildID = message.guild.id;
-	const debug = await db.getSetting(guildID, "debug");
 	var messageContent = message.content.toLowerCase();;
 	
 	// Remove emotes from the message
@@ -173,17 +156,36 @@ async function checkMessage(lang, message) {
 
 	// Check message
 	var result;
+	var otherResult;
+	var positive = false;
+	var messageLength = messageContent.length;
+	if (messageLength < MIN_MSG_LEN || messageLength > MAX_MSG_LEN) return;
 	if (blacklistPass) {
-		result = await detections[lang].analyze(messageContent, debug, perspective);
-		if (!result.positive) return;
+		// Send the message to the API
+		result = await lm.analyze(lang, messageContent, debug);
+		if (result.positive) positive = true;
+		
+		// If the API detected the message as another language, then we check for this language too
+		if (!positive) {
+			for(let language of result.detectedLanguages) {
+				otherResult = await lm.analyze(language, messageContent, debug);
+				if (otherResult.positive) {
+					positive = true;
+					result = otherResult;
+				}
+			}
+		}
+		if (!positive) return;
 	} else {
 		result = {values:{"Blacklist":"1000"}}
 	}
 
+	logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values));
+
 	// React in consequence
 	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);	
 	if (await db.getSetting(guildID, "warnMessage")) {
-		const warnMessage = await tools.sendCatch(message.channel, eb[lang].getWarnEmbed(result, debug));
+		const warnMessage = await tools.sendCatch(message.channel, lm.getEb(lang).getWarnEmbed(result, debug));
 		await tools.delay(await db.getSetting(guildID, "deleteDelay"));
 		warnMessage.delete();
 	}
@@ -206,47 +208,47 @@ async function addList(message, lang, args, list) {
 	if (args[1] == "add") {
 		// Check the word
 		if (word.length < 3 || word.length > 32) {
-			tools.sendCatch(channel, tools.getString("wordIncorrect", lang, {list:list}));
+			tools.sendCatch(channel, lm.getString("wordIncorrect", lang, {list:list}));
 			return;
 		}
 		if (wordsList.includes(word)) {
-			tools.sendCatch(channel, tools.getString("listContainsError", lang, {word:word, list:list}));
+			tools.sendCatch(channel, lm.getString("listContainsError", lang, {word:word, list:list}));
 			return;
 		}
 		wordsList.push(word);
 		db.setSetting(guildID, list, wordsList);
-		tools.sendCatch(channel, tools.getString("listSet", lang, {word:word, list:list}));
+		tools.sendCatch(channel, lm.getString("listSet", lang, {word:word, list:list}));
 	} else if (args[1] == "remove") {
 		if (!wordsList.includes(word)) {
-			tools.sendCatch(channel, tools.getString("listRemoveError", lang, {word:word, list:list}));
+			tools.sendCatch(channel, lm.getString("listRemoveError", lang, {word:word, list:list}));
 			return;
 		}
 		wordsList.splice(wordsList.indexOf(word), 1);
 		db.setSetting(guildID, list, wordsList);
-		tools.sendCatch(channel, tools.getString("listRemove", lang, {word:word, list:list}));
+		tools.sendCatch(channel, lm.getString("listRemove", lang, {word:word, list:list}));
 	} else {
 		if (wordsList.length > 0) tools.sendCatch(channel, wordsList);
-		else tools.sendCatch(channel, tools.getString("listEmpty", lang, {list:list}));
+		else tools.sendCatch(channel, lm.getString("listEmpty", lang, {list:list}));
 	}
 }
 
 client.on('message', async function (message) {
-	
-
-	
 	// Check if the message is not a PM
 	const guild = message.guild;
 	if (!guild) return;
+	
+	// Check if the message is not from a bot
+	if(message.author.bot) return;
 	
 	// Get guilds settings
 	const prefix = await db.getSetting(guild.id, "prefix") || DEFAULT_PREFIX;
 	const lang = await db.getSetting(guild.id, "lang") || DEFAULT_LANGUAGE;
 
 	// Analyze message
-	var messageLength = message.content.length;
-	if (messageLength >= MIN_MSG_LEN && messageLength <= MAX_MSG_LEN)
-		if (await channelAllowed(guild.id, message) || await db.getSetting(guild.id, "global"))
-			checkMessage(lang, message);
+	if (await channelAllowed(guild.id, message) || await db.getSetting(guild.id, "global")) {
+		const debug = await db.getSetting(guild.id, "debug");
+		checkMessage(lang, message, debug);
+	}
 	
 	// Check if it's a command
 	// Check if the message starts with prefix
@@ -254,242 +256,222 @@ client.on('message', async function (message) {
 	if (!messageContent.startsWith(`${prefix}`)) return; // If message doesn't start with !o then return
     const args = messageContent.slice(prefix.length).trim().split(/ +/g); // Get message arguments
     const channel = message.channel;
-	
+
+
+
+	// #################################################### USER COMMANDS #################################################### //
+	// If allowed to send the command
+	if (!await isAllowed(message, lang)) return;
+	// #################################################### USER COMMANDS #################################################### //
+
+
+
     if (messageContent.startsWith(`${prefix}h`)) { // help
-        if (await isAllowed(message, false, lang)) {
-			const embeds = eb[lang];
-			if (embeds == null) {
-				logger.error("Error happened on help command, wrong language: " + lang);
-				tools.sendCatch(channel, "An error happened, if the error persist, you can get help on the support server.");
-				return;
-			}
-            await tools.sendCatch(channel, embeds.getHelpEmbed(prefix));
-        }
-    }
+		await tools.sendCatch(channel, lm.getEb(lang).getHelpEmbed(prefix));
+	}
 
 	else if (messageContent.startsWith(`${prefix}info`)) { // info
-        if (await isAllowed(message, false, lang)) {
-            var servers = client.guilds;
-			var users = 0;
-			client.guilds.forEach(g => {
-			  users += g.memberCount;
-			})
-			var uptime = process.uptime();
-            tools.sendCatch(channel, eb[lang].getInfoEmbed(users, servers.size, tools.format(uptime)));
-        }
+		var servers = client.guilds;
+		var users = 0;
+		client.guilds.forEach(g => {
+		  users += g.memberCount;
+		})
+		var uptime = process.uptime();
+		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, servers.size, tools.format(uptime)));
+    }
+	
+	else if (messageContent.startsWith(`${prefix}analyze`)) { // info
+		checkMessage(lang, message, true);
     }
 
-    else if (messageContent.startsWith(`${prefix}add`)) { // add [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            db.addGuildChannel(channel, lang);
-        }
+
+
+	// #################################################### MODERATOR COMMANDS #################################################### //
+	// If moderator allowed to send the command
+	if (!await isModeratorAllowed(message)) { tools.sendCatch(message.channel, lm.getString("noPermission", lang)); return; }
+	// #################################################### MODERATOR COMMANDS #################################################### //
+	
+	
+	
+    if (messageContent.startsWith(`${prefix}add`)) { // add [ADMIN]
+		db.addGuildChannel(channel, lang);
     }
 
     else if (messageContent.startsWith(`${prefix}remove`)) { // remove [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            db.removeGuildChannel(channel, lang);
-        }
+		db.removeGuildChannel(channel, lang);
     }
 	
     else if (messageContent.startsWith(`${prefix}delay`)) { // delete delay [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            if (args[1] <= 30000 && args[1] >= 1000 && tools.isInt(args[1])) {
-                db.setSetting(guild.id, "deleteDelay", args[1]);
-                tools.sendCatch(channel, tools.getString("deleteDelaySet", lang, {delay:args[1]}));
-            } else {
-                tools.sendCatch(channel, tools.getString("deleteDelayError", lang));
-            }
-        }
+		if (args[1] <= 30000 && args[1] >= 1000 && tools.isInt(args[1])) {
+			db.setSetting(guild.id, "deleteDelay", args[1]);
+			tools.sendCatch(channel, lm.getString("deleteDelaySet", lang, {delay:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("deleteDelayError", lang));
+		}
     }
 	
 	else if (messageContent.startsWith(`${prefix}debug`)) { // delete delay [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            if (args[1] == "true" || args[1] == "false") {
-				var finalValue = args[1] == "true";
-                db.setSetting(guild.id, "debug", finalValue);
-                tools.sendCatch(channel, tools.getString("debugSet", lang, {defined:args[1]}));
-            } else {
-                tools.sendCatch(channel, tools.getString("debugError", lang));
-            }
-        }
+		if (args[1] == "true" || args[1] == "false") {
+			var finalValue = args[1] == "true";
+			db.setSetting(guild.id, "debug", finalValue);
+			tools.sendCatch(channel, lm.getString("debugSet", lang, {defined:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("debugError", lang));
+		}
     }
 	
 	else if (messageContent.startsWith(`${prefix}global`)) { // global [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            if (args[1] == "true" || args[1] == "false") {
-				var finalValue = args[1] == "true";
-                db.setSetting(guild.id, "global", finalValue);
-                tools.sendCatch(channel, tools.getString("globalSet", lang, {defined:args[1]}));
-            } else {
-                tools.sendCatch(channel, tools.getString("globalError", lang));
-            }
-        }
+		if (args[1] == "true" || args[1] == "false") {
+			var finalValue = args[1] == "true";
+			db.setSetting(guild.id, "global", finalValue);
+			tools.sendCatch(channel, lm.getString("globalSet", lang, {defined:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("globalError", lang));
+		}
     }
 	
 	else if (messageContent.startsWith(`${prefix}whitelist`)) { // global [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            addList(message, lang, args, "whitelist"); 
-        }
+		addList(message, lang, args, "whitelist"); 
     }
 	
 	else if (messageContent.startsWith(`${prefix}blacklist`)) { // global [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            addList(message, lang, args, "blacklist"); 
-        }
+		addList(message, lang, args, "blacklist"); 
     }
 	
 	else if (messageContent.startsWith(`${prefix}warn`)) { // warn message [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            if (args[1] == "true" || args[1] == "false") {
-				var finalValue = args[1] == "true";
-                db.setSetting(guild.id, "warnMessage", finalValue);
-                tools.sendCatch(channel, tools.getString("warnSet", lang, {defined:args[1]}));
-            } else {
-                tools.sendCatch(channel, tools.getString("warnError", lang));
-            }
-        }
+		if (args[1] == "true" || args[1] == "false") {
+			var finalValue = args[1] == "true";
+			db.setSetting(guild.id, "warnMessage", finalValue);
+			tools.sendCatch(channel, lm.getString("warnSet", lang, {defined:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("warnError", lang));
+		}
     }
 	
 	else if (messageContent.startsWith(`${prefix}delete`)) { // delete message [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            if (args[1] == "true" || args[1] == "false") {
-				var finalValue = args[1] == "true";
-                db.setSetting(guild.id, "deleteMessage", finalValue);
-                tools.sendCatch(channel, tools.getString("deleteSet", lang, {defined:args[1]}));
-            } else {
-                tools.sendCatch(channel, tools.getString("deleteError", lang));
-            }
-        }
+		if (args[1] == "true" || args[1] == "false") {
+			var finalValue = args[1] == "true";
+			db.setSetting(guild.id, "deleteMessage", finalValue);
+			tools.sendCatch(channel, lm.getString("deleteSet", lang, {defined:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("deleteError", lang));
+		}
     }
 	
     else if (messageContent.startsWith(`${prefix}prefix`)) { // remove [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-			// If not empty, less than 4 characters and ASCII only
-            if ((args[1] || "").length < 4 && args[1] && /^[\x00-\x7F]*$/.test(args[1])) {
-                db.setSetting(guild.id, "prefix", args[1]);
-				tools.sendCatch(channel, tools.getString("prefixSet", lang, {delay:args[1]}));
-            } else {
-                tools.sendCatch(channel, tools.getString("prefixError", lang));
-            }
-        }
+		// If not empty, less than 4 characters and ASCII only
+		if ((args[1] || "").length < 4 && args[1] && /^[\x00-\x7F]*$/.test(args[1])) {
+			db.setSetting(guild.id, "prefix", args[1]);
+			tools.sendCatch(channel, lm.getString("prefixSet", lang, {delay:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("prefixError", lang));
+		}
     }
 	
     else if (messageContent.startsWith(`${prefix}reset`)) { // remove [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            await db.resetGuildSettings(guild.id, guild.name, channel, lang);
-			initSettings(guild);
-        }
+		await db.resetGuildSettings(guild.id, guild.name, channel, lang);
+		initSettings(guild);
     }
 
     else if (messageContent.startsWith(`${prefix}channels`)) { // remove [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            const channels = await db.getGuildChannels(guild.id)
-			tools.sendCatch(channel, getChannelsString(channels, lang));
-        }
-    }
-
-    else if (messageContent.startsWith(`${prefix}kill`)) { // kill [ADMIN]
-        if (message.author.id == OWNER_ID) {
-            exitHandler({cleanup:true}, null);
-        }
+		tools.sendCatch(channel, getChannelsString(guild.id, lang));
     }
 
 	else if (messageContent.startsWith(`${prefix}lang`)) { // lang [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-			const langs = tools.getLocales();
-			const commandLang = (args[1] || "").substring(0, 2);
-            if (langs.includes(commandLang)) {
-                db.setSetting(guild.id, "lang", commandLang);
-				tools.sendCatch(channel, tools.getString("langSet", lang, {lang:commandLang}));
-            } else {
-				tools.sendCatch(channel, tools.getString("langError", lang, {lang:commandLang, langs:langs}));
-            }
-        }
+		const langs = lm.getLocales();
+		const commandLang = (args[1] || "").substring(0, 2);
+		if (langs.includes(commandLang)) {
+			db.setSetting(guild.id, "lang", commandLang);
+			tools.sendCatch(channel, lm.getString("langSet", lang, {lang:commandLang}));
+		} else {
+			tools.sendCatch(channel, lm.getString("langError", lang, {lang:commandLang, langs:langs}));
+		}
     }
 
     else if (messageContent.startsWith(`${prefix}admin`)) { // admin [ADMIN]
-        if (await isAllowed(message, true, lang)) {
-            tools.sendCatch(channel, eb[lang].getAdminHelpEmbed(prefix));
-        }
+		tools.sendCatch(channel, lm.getEb(lang).getAdminHelpEmbed(prefix));
     }
 
-    else if (messageContent.startsWith(`${prefix}ls`)) { // ls [OWNER]
-        if (message.author.id == OWNER_ID) {
-            var servers = client.guilds;
-			var users = 0;
-			var en = 0;
-			for (var g of servers) {
-				var templang = await db.getSetting(g[0], "lang");
-				if (templang == "en") en++;
-				var members = g[1].memberCount;
-				users += members;
-				logger.debug("[" + g[0] + "] (" + templang + ") (" + members + " users) " + g[1].name);
-			}
-			var ratioEN = (en / servers.size * 100).toFixed(2);
-			var ratioFR = (100-ratioEN).toFixed(2);
-			logger.debug("Total users: " + users);
-			logger.debug("Total servers: " + servers.size);
-			logger.debug("English:" + ratioEN + "% (" + en + ") French:" + ratioFR + "% (" + (servers.size-en) + ")"); 
-        }
+	
+
+	// #################################################### OWNER COMMANDS #################################################### //
+	// If owner allowed to send the command
+	if (message.author.id != OWNER_ID) return;
+	// #################################################### OWNER COMMANDS #################################################### //
+
+
+
+    if (messageContent.startsWith(`${prefix}ls`)) { // ls [OWNER]
+		var servers = client.guilds;
+		var users = 0;
+		var en = 0;
+		for (var g of servers) {
+			var templang = await db.getSetting(g[0], "lang");
+			if (templang == "en") en++;
+			var members = g[1].memberCount;
+			users += members;
+			logger.debug("[" + g[0] + "] (" + templang + ") (" + members + " users) " + g[1].name);
+		}
+		var ratioEN = (en / servers.size * 100).toFixed(2);
+		var ratioFR = (100-ratioEN).toFixed(2);
+		logger.debug("Total users: " + users);
+		logger.debug("Total servers: " + servers.size);
+		logger.debug("English:" + ratioEN + "% (" + en + ") French:" + ratioFR + "% (" + (servers.size-en) + ")"); 
+    }
+
+    else if (messageContent.startsWith(`${prefix}kill`)) { // kill [OWNER]
+		exitHandler({cleanup:true}, null);
     }
 
 	else if (messageContent.startsWith(`${prefix}clean`)) { // clean [OWNER]
-        if (message.author.id == OWNER_ID) {
-            const guilds = client.guilds;
-			const dbguilds = await db.getAllServers();
-			for (var entry of dbguilds) {
-				var dbGuildID = entry.name;
-				if (!guilds.get(dbGuildID))
-					db.resetGuildSettings(dbGuildID, dbGuildID, null, null);
-			}
-			logger.success("Command clean OK");
-        }
+		const guilds = client.guilds;
+		const dbguilds = await db.getAllServers();
+		for (var entry of dbguilds) {
+			var dbGuildID = entry.name;
+			if (!guilds.get(dbGuildID))
+				db.resetGuildSettings(dbGuildID, dbGuildID, null, null);
+		}
+		logger.success("Command clean OK");
     }
 
 	else if (messageContent.startsWith(`${prefix}update`)) { // restore [OWNER]
-        if (message.author.id == OWNER_ID) {
-            const guilds = client.guilds;
-			const tempdbguilds = await db.getAllServers();
-			var dbguilds = [];
-			for (var entry of tempdbguilds) {
-				dbguilds[entry.name] = true;
-			}
-			for (var id of guilds.keys()) {
-				if (dbguilds[id]) { // If the guild exists in the database
-					const tempGuild = guilds.get(id);
-					var guildID = tempGuild.id;
-					var guildName = tempGuild.name;
-					db.setSetting(guildID, "name", guildName);
-				}
-			}
-			logger.success("Command update OK");
+		const guilds = client.guilds;
+		const tempdbguilds = await db.getAllServers();
+		var dbguilds = [];
+		for (var entry of tempdbguilds) {
+			dbguilds[entry.name] = true;
 		}
+		for (var id of guilds.keys()) {
+			if (dbguilds[id]) { // If the guild exists in the database
+				const tempGuild = guilds.get(id);
+				var guildID = tempGuild.id;
+				var guildName = tempGuild.name;
+				db.setSetting(guildID, "name", guildName);
+			}
+		}
+		logger.success("Command update OK");
     }
 
 	else if (messageContent.startsWith(`${prefix}restore`)) { // restore [OWNER]
-        if (message.author.id == OWNER_ID) {
-            const guilds = client.guilds;
-			const tempdbguilds = await db.getAllServers();
-			var dbguilds = [];
-			for (var entry of tempdbguilds) {
-				dbguilds[entry.name] = true;
-			}
-			for (var id of guilds.keys()) {
-				if (!dbguilds[id]) {
-					const tempGuild = guilds.get(id);
-					initSettings(tempGuild);
-				}
-			}
-			logger.success("Command restore OK");
+		const guilds = client.guilds;
+		const tempdbguilds = await db.getAllServers();
+		var dbguilds = [];
+		for (var entry of tempdbguilds) {
+			dbguilds[entry.name] = true;
 		}
+		for (var id of guilds.keys()) {
+			if (!dbguilds[id]) {
+				const tempGuild = guilds.get(id);
+				initSettings(tempGuild);
+			}
+		}
+		logger.success("Command restore OK");
     }
 
 	else if (messageContent.startsWith(`${prefix}status`)) { // status [OWNER]
-        if (message.author.id == OWNER_ID) {
-			var newStatus = messageContent.replace(`${prefix}status `, "");
-			logger.success("Status changed to: " + newStatus);
-			client.user.setActivity(newStatus);
-		}
+		var newStatus = messageContent.replace(`${prefix}status `, "");
+		logger.success("Status changed to: " + newStatus);
+		client.user.setActivity(newStatus);
     }
 })
 // ---------------------------------------------- LISTENERS ---------------------------------------------- //
@@ -499,11 +481,9 @@ client.on('message', async function (message) {
 // ------- START ------- //
 async function start() {
     await db.init();
-	tools.loadLanguages();
-	eb = tools.getEmbeds();
-	detections = tools.getDetections();
 	logger.info("Connecting to Discord...");
-    client.login(token);
+    client.login(config.token);
+	//dbl.init(client);
 }
 start();
 // ------- START ------- //
