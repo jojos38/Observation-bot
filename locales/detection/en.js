@@ -89,7 +89,7 @@ module.exports = {
             if (multiple >= MIN_MULTIPLE_TRIGGER) score.positive = true;
 
 			// Check message average score
-			var average = Math.round(total/ATTRIBUTES_TOT*1000);
+			var average = Math.round(total/ATTRIBUTES_TOT);
 			if ((average > AVERAGE_TRIGGER && !score.positive) || debug) { // Max value is 1000
 				score.positive = true;
 				score.values[TRANSLATION_TABLE["AVERAGE"]] = average;
