@@ -50,13 +50,19 @@ An 'Authorized channel' is a channel where the bot is going to operate.
 - - Change the bot prefix
 
 - !olang [language]
-- -Change the language of the bot (languages available: french / english)
+- - Change the global language of the bot (Use ISO 631-1, example: fr, es ,en)
 
 - !oadd
 - - Add the current channel in the authorized channels
 
 - !oremove
 - - Remove the current channel from the authorized channels
+
+- !ochannellang
+- - Set the default lang for a specific channel (Use ISO 631-1, example: fr, es ,en) (Default: auto)
+
+- !oanalyze [text]
+- - Analyze your message and give you a score
 
 - !oreset
 - - Delete all bot data from the server (Authorized channels etc...)
