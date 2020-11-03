@@ -10,7 +10,8 @@ const TRANSLATION_TABLE = {
 	"THREAT": "Threat",
 	"SEXUALLY_EXPLICIT": "Sexually Explicit",
 	"INCOHERENT": "Incoherent",
-	"FLIRTATION": "Flirtation"
+	"FLIRTATION": "Flirtation",
+	"AVERAGE": "Multiples"
 }
 
 const SINGLE_TRIGGER_TABLE = {
