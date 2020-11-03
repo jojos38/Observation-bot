@@ -161,6 +161,9 @@ async function checkMessage(lang, message, debug) {
 	var messageLength = messageContent.length;
 	if (messageLength < MIN_MSG_LEN || messageLength > MAX_MSG_LEN) return;
 	if (blacklistPass) {
+		// Increment counter
+		db.incrementCounter();
+		
 		// Send the message to the API
 		result = await lm.analyze(lang, messageContent, debug);
 		if (result.positive) positive = true;
@@ -277,7 +280,8 @@ client.on('message', async function (message) {
 		  users += g.memberCount;
 		})
 		var uptime = process.uptime();
-		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, servers.size, tools.format(uptime)));
+		var counter = await db.getCounter();
+		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, servers.size, tools.format(uptime), counter));
     }
 	
 	else if (messageContent.startsWith(`${prefix}analyze`)) { // info

@@ -42,7 +42,7 @@ module.exports = {
         return embed;
     },
 	
-    getInfoEmbed: function (users, servers, uptime) {
+    getInfoEmbed: function (users, servers, uptime, counter) {
         const embed = new Discord.RichEmbed({
 			author: {
 				name: "Credit:",
@@ -65,6 +65,11 @@ module.exports = {
 			  {
 				name: "Uptime",
 				value: uptime,
+				inline: true
+			  },
+			  {
+				name: "Analyzed messages",
+				value: counter,
 				inline: true
 			  }
 			]

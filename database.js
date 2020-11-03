@@ -157,6 +157,31 @@ module.exports = {
 				resolve(collInfos);
 			});
 		});
+    },
+	
+	incrementCounter: function () {
+		const guildCollection = mainDB.collection("Global");
+		const settingToFind = { setting: "counter" };
+		guildCollection.findOne(settingToFind, function (err, result) {
+			if (err) logger.error(err);
+			if (result) {
+				guildCollection.updateOne(settingToFind, { $set: { value: result.value+1 } });
+			}
+		});
+    },
+	
+	getCounter: function () {
+		return new Promise(async function (resolve, reject) {
+			const guildCollection = mainDB.collection("Global");
+			guildCollection.findOne({ setting: "counter" }, function (err, setting) {
+				if (err) logger.error(err);
+				if (setting) {
+					resolve(setting.value);
+				} else {
+					resolve(setting);
+				}
+			});
+		});
     }
     // ------------------------------------- SOME FUNCTIONS ------------------------------------- //
 }
