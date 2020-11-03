@@ -183,7 +183,7 @@ async function checkMessage(lang, message, debug) {
 		result = {values:{"Blacklist":"1000"}}
 	}
 
-	logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values));
+	if (!debug) logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values));
 
 	// React in consequence
 	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);	
@@ -199,8 +199,7 @@ async function addList(message, lang, args, list) {
 	const channel = message.channel;
 	const guildID = message.guild.id;
 	var wordsList = await db.getSetting(guildID, list);
-	logger.debug(wordsList);
-	
+
 	// Reconstruct the word
 	var word = "";
 	for (var i = 2; i < args.length; i++)
@@ -271,6 +270,7 @@ client.on('message', async function (message) {
 
     if (messageContent.startsWith(`${prefix}h`)) { // help
 		await tools.sendCatch(channel, lm.getEb(lang).getHelpEmbed(prefix));
+		return;
 	}
 
 	else if (messageContent.startsWith(`${prefix}info`)) { // info
@@ -282,10 +282,14 @@ client.on('message', async function (message) {
 		var uptime = process.uptime();
 		var counter = await db.getCounter();
 		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, servers.size, tools.format(uptime), counter));
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}analyze`)) { // info
-		checkMessage(lang, message, true);
+		var tempMsg = message;
+		tempMsg.content = tempMsg.content.replace(prefix + "analyze ", "");
+		checkMessage(lang, tempMsg, true);
+		return;
     }
 
 
@@ -299,10 +303,12 @@ client.on('message', async function (message) {
 	
     if (messageContent.startsWith(`${prefix}add`)) { // add [ADMIN]
 		db.addGuildChannel(channel, lang);
+		return;
     }
 
     else if (messageContent.startsWith(`${prefix}remove`)) { // remove [ADMIN]
 		db.removeGuildChannel(channel, lang);
+		return;
     }
 	
     else if (messageContent.startsWith(`${prefix}delay`)) { // delete delay [ADMIN]
@@ -312,6 +318,7 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("deleteDelayError", lang));
 		}
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}debug`)) { // delete delay [ADMIN]
@@ -322,6 +329,7 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("debugError", lang));
 		}
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}global`)) { // global [ADMIN]
@@ -332,14 +340,17 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("globalError", lang));
 		}
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}whitelist`)) { // global [ADMIN]
-		addList(message, lang, args, "whitelist"); 
+		addList(message, lang, args, "whitelist");
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}blacklist`)) { // global [ADMIN]
-		addList(message, lang, args, "blacklist"); 
+		addList(message, lang, args, "blacklist");
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}warn`)) { // warn message [ADMIN]
@@ -350,6 +361,7 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("warnError", lang));
 		}
+		return;
     }
 	
 	else if (messageContent.startsWith(`${prefix}delete`)) { // delete message [ADMIN]
@@ -360,6 +372,7 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("deleteError", lang));
 		}
+		return;
     }
 	
     else if (messageContent.startsWith(`${prefix}prefix`)) { // remove [ADMIN]
@@ -370,15 +383,18 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("prefixError", lang));
 		}
+		return;
     }
 	
     else if (messageContent.startsWith(`${prefix}reset`)) { // remove [ADMIN]
 		await db.resetGuildSettings(guild.id, guild.name, channel, lang);
 		initSettings(guild);
+		return;
     }
 
     else if (messageContent.startsWith(`${prefix}channels`)) { // remove [ADMIN]
 		tools.sendCatch(channel, getChannelsString(guild.id, lang));
+		return;
     }
 
 	else if (messageContent.startsWith(`${prefix}lang`)) { // lang [ADMIN]
@@ -390,10 +406,12 @@ client.on('message', async function (message) {
 		} else {
 			tools.sendCatch(channel, lm.getString("langError", lang, {lang:commandLang, langs:langs}));
 		}
+		return;
     }
 
     else if (messageContent.startsWith(`${prefix}admin`)) { // admin [ADMIN]
 		tools.sendCatch(channel, lm.getEb(lang).getAdminHelpEmbed(prefix));
+		return;
     }
 
 	
