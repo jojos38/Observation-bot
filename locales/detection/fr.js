@@ -18,7 +18,7 @@ const singlePercentageTable = {
         "TOXICITY": 900,
         "IDENTITY_ATTACK_EXPERIMENTAL": 810,
         "INSULT_EXPERIMENTAL": 920,
-        "PROFANITY_EXPERIMENTAL": 900,
+        "PROFANITY_EXPERIMENTAL": 921,
         "THREAT_EXPERIMENTAL": 750,
 }
 
