@@ -92,7 +92,7 @@ module.exports = {
 				},
 				{
                     name: prefix + "!jlang [langue]",
-                    value: " - Change la langue du bot (langues disponibles: french / english)"
+                    value: " - Change la langue du bot (Utilise la norme ISO 631-1, exemple: fr, es ,en)"
                 },
                 {
                     name: prefix + "add",
@@ -101,6 +101,14 @@ module.exports = {
                 {
                     name: prefix + "remove",
                     value: "Retire le channel où est lancé la commande de la liste des channels autorisés"
+                },
+				{
+                    name: prefix + "analyze [text]",
+                    value: "Analyse le message et donne un score"
+                },
+                {
+                    name: prefix + "channellang",
+                    value: "Défini la langue par défaut d'un channel (Utilise la norme ISO 631-1, exemple: fr, es ,en) (Par défaut: auto)"
                 },
                 {
                     name: prefix + "reset",

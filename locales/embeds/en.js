@@ -92,7 +92,7 @@ module.exports = {
 				},
 				{
                     name: prefix + "lang [language]",
-                    value: "Change the language of the bot (languages available: french / english)"
+                    value: "Change the global language of the bot (Use ISO 631-1, example: fr, es ,en)"
                 },	
                 {
                     name: prefix + "add",
@@ -101,6 +101,14 @@ module.exports = {
                 {
                     name: prefix + "remove",
                     value: "Remove the current channel from the authorized channels"
+                },
+                {
+                    name: prefix + "analyze [text]",
+                    value: "Analyze your message and give you a score"
+                },
+                {
+                    name: prefix + "channellang",
+                    value: "Set the default lang for a specific channel (Use ISO 631-1, example: fr, es ,en) (Default: auto)"
                 },
                 {
                     name: prefix + "reset",
