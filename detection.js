@@ -13,7 +13,7 @@ module.exports = {
 			var total = 0
 			var multiple = 0;
 			var score = {positive:false, values:{}, detectedLanguages: result.detectedLanguages};
-			
+
 			// Check each score attribute
 			for(let type in result.attributeScores) {
 				let value = Math.round(result.attributeScores[type].summaryScore.value*1000);

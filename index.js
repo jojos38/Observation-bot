@@ -64,7 +64,7 @@ async function isModeratorAllowed(message) {
 	if (!message) return false;
 	const member = message.member || message.guild.member(message.author);
 	if (!member) return false;
-	
+
 	// Admin perms
 	return member.hasPermission("MANAGE_GUILD");
 }
@@ -129,7 +129,7 @@ client.on("guildDelete", guild => {
    }
 });
 
-async function checkMessage(lang, message, debug) {	
+async function checkMessage(lang, message, debug) {
 	// Values
 	const guildID = message.guild.id;
 	var messageContent = message.content.toLowerCase();;
@@ -177,7 +177,7 @@ async function checkMessage(lang, message, debug) {
 		if (result.positive) positive = true;
 
 		// If the API detected the message as another language, then we check for this language too
-		if (!positive) {
+		if (!positive && result.detectedLanguages) {
 			for(let language of result.detectedLanguages) {
 				otherResult = await lm.analyze(language, messageContent, debug);
 				if (otherResult.positive) {
@@ -194,7 +194,7 @@ async function checkMessage(lang, message, debug) {
 	if (!debug) logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values));
 
 	// React in consequence
-	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);	
+	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);
 	if (await db.getSetting(guildID, "warnMessage")) {
 		const warnMessage = await tools.sendCatch(message.channel, lm.getEb(lang).getWarnEmbed(result, debug));
 		await tools.delay(await db.getSetting(guildID, "deleteDelay"));
