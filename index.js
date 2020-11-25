@@ -242,6 +242,33 @@ async function addList(message, lang, args, list) {
 	}
 }
 
+
+
+client.on('messageUpdate', async function (oldMessage, newMessage) {
+	// Check if the message is not a PM
+	const guild = newMessage.guild;
+	if (!guild) return;
+	logger.debug("Guild OK")
+	
+	// Check if the message is not from a bot
+	if(newMessage.author.bot) return;
+	logger.debug("Private message OK")
+	
+	// Get guilds settings
+	const prefix = await db.getSetting(guild.id, "prefix") || DEFAULT_PREFIX;
+	const lang = await db.getSetting(guild.id, "lang") || DEFAULT_LANGUAGE;
+	
+	// Analyze message
+	if (Math.abs(oldMessage.content.length - newMessage.content.length) > 3) {
+		if (await channelAllowed(guild.id, newMessage) || await db.getSetting(guild.id, "global")) {
+			const debug = await db.getSetting(guild.id, "debug");
+			checkMessage(lang, newMessage, debug);
+		}
+	}
+});
+
+
+
 client.on('message', async function (message) {
 	// Check if the message is not a PM
 	const guild = message.guild;
