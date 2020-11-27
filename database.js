@@ -210,6 +210,42 @@ module.exports = {
 				}
 			});
 		});
+    },
+	
+	generateToken: function (guildID, lang) {
+		return new Promise(async function (resolve, reject) {		
+			const token = require('crypto').randomBytes(32).toString('hex');
+			const guildCollection = mainDB.collection(guildID);
+			guildCollection.findOne({token: {$exists: true}}, { projection: { _id: 0} }, function (err, result) { // Try to find the channel to add
+				if (!err) {
+					if (result) {
+						const toUpdate = { token: result.token };
+						guildCollection.updateOne(toUpdate, { $set: {token: token, date: Date.now()} }, function(err, res) {
+							if (!err) {
+								logger.info("Document token updated successfully");
+								resolve(token);
+							} else {
+								logger.error(err);
+								resolve(false);
+							}
+						});
+					} else {
+						guildCollection.insertOne({ token: token, date: Date.now() }, function (err, item) { // Insert channel:4891657867278524898
+							if (!err) {
+								logger.info("Document token inserted successfully");
+								resolve(token);
+							} else {
+								logger.error(err);
+								resolve(false);
+							}
+						});
+					}
+				} else {
+					logger.error(err);
+					resolve(false);
+				}
+			});
+		});
     }
     // ------------------------------------- SOME FUNCTIONS ------------------------------------- //
 }

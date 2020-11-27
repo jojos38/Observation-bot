@@ -248,12 +248,10 @@ client.on('messageUpdate', async function (oldMessage, newMessage) {
 	// Check if the message is not a PM
 	const guild = newMessage.guild;
 	if (!guild) return;
-	logger.debug("Guild OK")
-	
+
 	// Check if the message is not from a bot
 	if(newMessage.author.bot) return;
-	logger.debug("Private message OK")
-	
+
 	// Get guilds settings
 	const prefix = await db.getSetting(guild.id, "prefix") || DEFAULT_PREFIX;
 	const lang = await db.getSetting(guild.id, "lang") || DEFAULT_LANGUAGE;
@@ -424,7 +422,7 @@ client.on('message', async function (message) {
 	
     else if (messageContent.startsWith(`${prefix}prefix`)) { // remove [ADMIN]
 		// If not empty, less than 4 characters and ASCII only
-		if ((args[1] || "").length < 4 && args[1] && /^[\x00-\x7F]*$/.test(args[1])) {
+		if ((args[1] || "").length <= 4 && args[1] && /^[\x00-\x7F]*$/.test(args[1])) {
 			db.setSetting(guild.id, "prefix", args[1]);
 			tools.sendCatch(channel, lm.getString("prefixSet", lang, {delay:args[1]}));
 		} else {
@@ -461,7 +459,21 @@ client.on('message', async function (message) {
 		return;
     }
 
-	
+	else if (messageContent.startsWith(`${prefix}config`)) { // admin [ADMIN]
+		// If not empty, less than 4 characters and ASCII only
+		if ((args[1] == "confirm")) {
+			const token = await db.generateToken(guild.id, lang);
+			if (token) {
+				const link = "https://observation.ddns.net/?tok=" + token + "&sid=" + guild.id;
+				tools.sendCatch(channel, lm.getString("configLink", lang));
+				tools.sendCatch(channel, link);
+			}
+			//tools.sendCatch(channel, "link");
+		} else {
+			tools.sendCatch(channel, lm.getString("configConfirm", lang, {prefix:prefix}));
+		}
+		return;
+    }
 
 	// #################################################### OWNER COMMANDS #################################################### //
 	// If owner allowed to send the command

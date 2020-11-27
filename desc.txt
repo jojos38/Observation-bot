@@ -1,0 +1,26 @@
+Observation is a multilang moderation bot based on a powerful Deep Learning algorithm it's able to detect any kind of toxicity or insults.
+
+- Patreon: https://www.patreon.com/jojos38
+- Tipeee: https://fr.tipeee.com/jojos38s-quizzar-bot
+
+# Observation
+>Observation is a powerful bot based on a Deep  Learning algorithm called Perspective API. It's working to remove any kind of insults and toxicity on your server. Observation can give a summary of why a message have been deleted, you can customize the behavior such as message deletion and much more.\
+The bot is still experimental and more features such as severity settings are to come.\
+If you have any issue you can join the help Discord to report anything!
+
+Features:
+- Per channel enable
+- Supports multiple languages (!olang to see the languages)
+- Based on a powerful Deep Learning algorithm
+- Supports messages edits
+- Lots of settings
+- Custom prefix
+
+-----
+> - Type !ohelp to start using the bot
+> - The main bot language can be set using !olang, specific languages can be set channel wise using !ochannellang, this should be used if your Discord is using multiple languages!
+-----
+
+https://discord.gg/DXpb9DN
+772446137499385866
+https://discord.com/oauth2/authorize?client_id=772446137499385866&scope=bot&permissions=388176

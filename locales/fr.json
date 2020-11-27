@@ -29,5 +29,7 @@
 	"listContainsError": "Erreur, le mot {{word}} est déjà dans la {{list}}",
 	"listRemoveError": "Erreur, le mot {{word}} n'est pas dans la {{list}}",
 	"listEmpty": "La {{list}} est vide",
-	"wordIncorrect": "Le mot doit faire minimum 3 caractères et au maximum 32 caractères."
+	"wordIncorrect": "Le mot doit faire minimum 3 caractères et au maximum 32 caractères.",
+	"configConfirm": "Un lien permettant à n'importe qui de configurer le bot va être envoyé!\nSoyez certain d'être dans un channel privé avant de lancer cette commande!\nTapez `{{prefix}}config confirm` pour continuer.",
+	"configLink": "Voici votre lien de configuration, ne donnez pas ce lien publiquement !\nCe dernier est valable 10 minutes.\nSeul le dernier lien généré est valable."
 }
