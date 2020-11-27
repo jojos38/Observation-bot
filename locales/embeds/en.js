@@ -87,6 +87,10 @@ module.exports = {
             },
             fields: [
 				{
+					name: prefix + "config",
+					value: "**NEW** Configure the bot trough a web interface"
+				},
+				{
 					name: prefix + "prefix",
 					value: "Change the bot prefix"
 				},
