@@ -191,7 +191,7 @@ async function checkMessage(lang, message, debug) {
 		result = {values:{"Blacklist":"1000"}}
 	}
 
-	if (!debug) logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values));
+	if (!debug) logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values) + " (" + message.guild.name + ")");
 
 	// React in consequence
 	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);

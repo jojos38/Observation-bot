@@ -46,7 +46,7 @@ module.exports = {
 	getEb: function(lang) {
 		return embeds[lang];
 	},
-	
+
 	analyze: function(lang, message, debug) {
 		var locales = i18n.getLocales();
 		if (locales.includes(lang))
@@ -56,7 +56,7 @@ module.exports = {
 			return {positive:false};
 		}
 	},
-	
+
 	reloadLanguages: function() {
 		if (detection) delete require.cache[require.resolve('./detection.js')];
 		detection = require('./detection.js');
@@ -68,14 +68,14 @@ module.exports = {
 		embeds = loadEmbeds();
 		detections = loadDetections();
 	},
-	
+
 	getString: function(name, lang, variables) {
 		if (variables)
 			return i18n.__({phrase:name, locale:lang}, variables).replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 		else
 			return i18n.__({phrase:name, locale:lang});
 	},
-	
+
 	getLocales: function() {
 		return i18n.getLocales();
 	}
