@@ -1,5 +1,3 @@
-const perspectiveClient = require('perspective-api-client');
-const perspective = new perspectiveClient({apiKey: config.apikey});
 const logger = require('./logger.js');
 const i18n = require("i18n");
 var detection;
@@ -24,20 +22,18 @@ function loadEmbeds() {
 	return embeds;
 }
 
-function loadDetections() {
+async function loadDetections() {
 	let detections = {};
 	let locales = i18n.getLocales();
-	locales.forEach(language => {
+	for (const language of locales) {
 		try {
-			let path = './locales/detection/' + language + '.json';
-			if (embeds[language]) delete require.cache[require.resolve(path)];
-			detections[language] = require(path);
+			detections[language] = await db.getSetting(language);
 		}
 		catch (error) {
 			logger.error("Error while loading detection file for language " + language);
 			logger.error(error);
 		}
-	});
+	}
 	logger.success("Loaded detection languages: " + locales);
 	return detections;
 }
@@ -47,17 +43,17 @@ module.exports = {
 		return embeds[lang];
 	},
 
-	analyze: function(lang, message, debug) {
+	analyze: async function(guildID, lang, message, debug, severity) {
 		var locales = i18n.getLocales();
 		if (locales.includes(lang))
-			return detection.analyze(message, debug, perspective, detections[lang]);
+			return detection.analyze(message, debug, await db.getSetting(guildID, "triggerTable_" + lang), severity);
 		else {
 			logger.warn("Language " + lang + " does not exists");
 			return {positive:false};
 		}
 	},
 
-	reloadLanguages: function() {
+	reloadLanguages: async function() {
 		if (detection) delete require.cache[require.resolve('./detection.js')];
 		detection = require('./detection.js');
 		i18n.configure({
@@ -66,7 +62,7 @@ module.exports = {
 		});
 		logger.success("Loaded i18n languages: " + i18n.getLocales());
 		embeds = loadEmbeds();
-		detections = loadDetections();
+		//detections = await loadDetections();
 	},
 
 	getString: function(name, lang, variables) {

@@ -11,12 +11,12 @@ const ACTIVITY_MESSAGE = "!ohelp";
 
 // -------------------- SOME VARIABLES -------------------- //
 global.config = require('./config.json');
+global.db = require('./database.js');
+global.lm = require('./languages-manager.js');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const tools = require('./tools.js');
-const db = require('./database.js');
 const logger = require('./logger.js');
-const lm = require('./languages-manager.js');
 const dbl = require('./dbl.js');
 // -------------------- SOME VARIABLES -------------------- //
 
@@ -73,15 +73,6 @@ function initSettings(guild) {
 	var guildID = guild.id;
 	var guildName = guild.name;
 	db.setSetting(guildID, "name", guildName);
-	db.setSetting(guildID, "lang", DEFAULT_LANGUAGE);
-	db.setSetting(guildID, "prefix", DEFAULT_PREFIX);
-	db.setSetting(guildID, "debug", false);
-	db.setSetting(guildID, "deleteMessage", true);
-	db.setSetting(guildID, "warnMessage", true);
-	db.setSetting(guildID, "deleteDelay", 5000);
-	db.setSetting(guildID, "global", false);
-	db.setSetting(guildID, "whitelist", []);
-	db.setSetting(guildID, "blacklist", []);
 	logger.info("Initialized server " + guildName);
 }
 
@@ -129,6 +120,8 @@ client.on("guildDelete", guild => {
    }
 });
 
+
+
 async function checkMessage(lang, message, debug) {
 	// Values
 	const guildID = message.guild.id;
@@ -150,17 +143,15 @@ async function checkMessage(lang, message, debug) {
 	// Remove white-list words
 	const whitelist = await db.getSetting(guildID, "whitelist");
 	if (whitelist)
-		for(let word of whitelist) {
-			messageContent = messageContent.replace(word, '');
-		}
+		for(let word of whitelist)
+			if (word.length > 0) messageContent = messageContent.replace(word, '');
 
 	// Check black-list words
 	var blacklistPass = true;
 	const blacklist = await db.getSetting(guildID, "blacklist");
 	if (blacklist)
-		for(let word of blacklist) {
-			if (messageContent.includes(word)) blacklistPass = false;
-		}
+		for(let word of blacklist)
+			if (word.length > 0) if (messageContent.includes(word)) blacklistPass = false;
 
 	// Check message
 	var result;
@@ -173,13 +164,13 @@ async function checkMessage(lang, message, debug) {
 		db.incrementCounter();
 
 		// Send the message to the API
-		result = await lm.analyze(lang, messageContent, debug);
+		result = await lm.analyze(guildID, lang, messageContent, debug, await db.getSetting(guildID, "severity"));
 		if (result.positive) positive = true;
 
 		// If the API detected the message as another language, then we check for this language too
 		if (!positive && result.detectedLanguages) {
 			for(let language of result.detectedLanguages) {
-				otherResult = await lm.analyze(language, messageContent, debug);
+				otherResult = await lm.analyze(guildID, language, messageContent, debug, await db.getSetting(guildID, "severity"));
 				if (otherResult.positive) {
 					positive = true;
 					result = otherResult;
@@ -193,6 +184,9 @@ async function checkMessage(lang, message, debug) {
 
 	if (!debug) logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values) + " (" + message.guild.name + ")");
 
+	// Warn the user in the db
+	db.warnUser(guildID, message.author.id);
+
 	// React in consequence
 	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);
 	if (await db.getSetting(guildID, "warnMessage")) {
@@ -201,6 +195,8 @@ async function checkMessage(lang, message, debug) {
 		tools.deleteCatch(warnMessage);
 	}
 }
+
+
 
 async function addList(message, lang, args, list) {
 	// Get settings
@@ -352,6 +348,24 @@ client.on('message', async function (message) {
 			tools.sendCatch(channel, lm.getString("langSet", lang, {lang:commandLang}));
 		} else {
 			tools.sendCatch(channel, lm.getString("langError", lang, {lang:commandLang, langs:langs}));
+		}
+		return;
+    }
+	
+	else if (messageContent.startsWith(`${prefix}severity`)) { // remove [ADMIN]
+		if (args[1] == "low") {
+			db.setSetting(guild.id, "severity", "low");
+			tools.sendCatch(channel, lm.getString("severitySet", lang, {severity:args[1]}));
+		}
+		else if (args[1] == "medium") {
+			db.setSetting(guild.id, "severity", "medium");
+			tools.sendCatch(channel, lm.getString("severitySet", lang, {severity:args[1]}));
+		}
+		else if (args[1] == "high") {
+			db.setSetting(guild.id, "severity", "high");
+			tools.sendCatch(channel, lm.getString("severitySet", lang, {severity:args[1]}));
+		} else {
+			tools.sendCatch(channel, lm.getString("severityError", lang, {severity:args[1]}));
 		}
 		return;
     }
@@ -566,7 +580,7 @@ client.on('message', async function (message) {
 // ------- START ------- //
 async function start() {
     await db.init();
-	lm.reloadLanguages(); // Load languages
+	await lm.reloadLanguages(); // Load languages
 	logger.info("Connecting to Discord...");
     client.login(config.token);
 	//dbl.init(client);

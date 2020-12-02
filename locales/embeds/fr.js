@@ -33,6 +33,10 @@ module.exports = {
                     name: prefix + "**info**",
                     value: " - Affiche les crédits"
                 },
+				{
+                    name: prefix + "analyze [text]",
+                    value: "Analyse le message et donne un score"
+                },
                 {
                     name: prefix + "**admin**",
                     value: " - Affiche la liste des commandes administrateur\n**Note :** Nécessite la permission de gérer le serveur"
@@ -95,6 +99,10 @@ module.exports = {
 					value: "Changer le préfix du bot"
 				},
 				{
+					name: prefix + "severity [severity]",
+					value: "Défini la sévérité du bot (low, medium ou high)"
+				},
+				{
                     name: prefix + "!jlang [langue]",
                     value: " - Change la langue du bot (Utilise la norme ISO 631-1, exemple: fr, es ,en)"
                 },
@@ -105,10 +113,6 @@ module.exports = {
                 {
                     name: prefix + "remove",
                     value: "Retire le channel où est lancé la commande de la liste des channels autorisés"
-                },
-				{
-                    name: prefix + "analyze [text]",
-                    value: "Analyse le message et donne un score"
                 },
                 {
                     name: prefix + "channellang",

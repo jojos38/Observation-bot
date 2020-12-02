@@ -1,8 +1,10 @@
 const logger = require('./logger.js');
 const tools = require('./tools.js');
+const perspectiveClient = require('perspective-api-client');
+const perspective = new perspectiveClient({apiKey: config.apikey});
 
 module.exports = {
-	analyze: async function (message, debug, perspective, config) {
+	analyze: async function (message, debug, config, severity) {
 		try {
 			// Send request
 			config.scan.comment.text = message;
@@ -19,12 +21,12 @@ module.exports = {
 				let value = Math.round(result.attributeScores[type].summaryScore.value*1000);
 				total += value;
 				// If a single value exceed a high value
-				if (value > config.singleTriggerTable[type]) {
+				if (value > config.single[type][severity]) {
 					score.positive = true;
 					score.values[config.translationTable[type]] = value;
 				}
 				// If multiple value exceed but lower values
-				else if (value > config.multipleTriggerTable[type] || debug) { // Max value is 100
+				else if (value > config.multiple[type][severity] || debug) { // Max value is 100
 					multiple += 1;
 					score.values[config.translationTable[type]] = value;
 				}

@@ -29,6 +29,10 @@ module.exports = {
                     name: prefix + "**help** or " + prefix +  "h",
                     value: " - Show help"
                 },
+				{
+                    name: prefix + "analyze [text]",
+                    value: "Analyze your message and give you a score"
+                },
                 {
                     name: prefix + "**info**",
                     value: " - Show informations about the bot"
@@ -95,6 +99,10 @@ module.exports = {
 					value: "Change the bot prefix"
 				},
 				{
+					name: prefix + "severity [severity]",
+					value: "Define bot severity (low, medium or high)"
+				},
+				{
                     name: prefix + "lang [language]",
                     value: "Change the global language of the bot (Use ISO 631-1, example: fr, es ,en)"
                 },	
@@ -105,10 +113,6 @@ module.exports = {
                 {
                     name: prefix + "remove",
                     value: "Remove the current channel from the authorized channels"
-                },
-                {
-                    name: prefix + "analyze [text]",
-                    value: "Analyze your message and give you a score"
                 },
                 {
                     name: prefix + "channellang",
