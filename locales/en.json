@@ -27,6 +27,7 @@
 	"listContainsError": "Error, the word {{word}} is already in the {{list}}",
 	"listRemoveError": "Error, the word {{word}} is not in the {{list}}",
 	"listEmpty": "The {{list}} is empty",
+	"listFullError": "Error, the {{list}} is full",
 	"wordIncorrect": "The word must be at least 3 characters and at most 32 characters",
 	"configConfirm": "The bot is going to send a link which allow anyone who has it to configure the bot!\nBe sure that you are in a private channel before running this command!\nType `{{prefix}}config confirm` to continue.",
 	"configLink": "Here is your config link, do not publicly give this link!\nThe link can be used for 10 minutes.\nOnly the latest generated link is valable.",

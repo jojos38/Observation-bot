@@ -206,6 +206,12 @@ async function addList(message, lang, args, list) {
 	const guildID = message.guild.id;
 	var wordsList = await db.getSetting(guildID, list);
 
+	// Check list length
+	if (wordsList.length > 64) {
+		tools.sendCatch(channel, lm.getString("listFullError", lang, {list:list}));
+		return;
+	}
+	
 	// Reconstruct the word
 	var word = "";
 	for (var i = 2; i < args.length; i++)
@@ -215,7 +221,7 @@ async function addList(message, lang, args, list) {
 	// Interact with the word
 	if (args[1] == "add") {
 		// Check the word
-		if (word.length < 3 || word.length > 32) {
+		if (word.length < 1 || word.length > 32) {
 			tools.sendCatch(channel, lm.getString("wordIncorrect", lang, {list:list}));
 			return;
 		}

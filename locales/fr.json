@@ -26,6 +26,7 @@
 	"listRemove": "Le mot {{word}} a été retiré de la {{list}}",
 	"listContainsError": "Erreur, le mot {{word}} est déjà dans la {{list}}",
 	"listRemoveError": "Erreur, le mot {{word}} n'est pas dans la {{list}}",
+	"listFullError": "Erreur, la {{list}} est pleine",
 	"listEmpty": "La {{list}} est vide",
 	"wordIncorrect": "Le mot doit faire minimum 3 caractères et au maximum 32 caractères.",
 	"configConfirm": "Un lien permettant à n'importe qui de configurer le bot va être envoyé!\nSoyez certain d'être dans un channel privé avant de lancer cette commande!\nTapez `{{prefix}}config confirm` pour continuer.",
