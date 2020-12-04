@@ -177,11 +177,22 @@ module.exports = {
 		else {
 			const globalCollection = mainDB.collection("Global");
 			var result = await findOneCatch(globalCollection, settingToFind);
-			var ok = await insertOneCatch(guildCollection, { setting: settingName, value: result.value });
-			if (ok) logger.info("Setting " + settingName + " was missing in " + guildID + " and was added");
-			else logger.error("Error while adding missing setting " + settingName + " in " + guildID);
-			return result.value;
+			if (result) {
+				var ok = await insertOneCatch(guildCollection, { setting: settingName, value: result.value });
+				if (ok) logger.info("Setting " + settingName + " was missing in " + guildID + " and was added");
+				else logger.error("Error while adding missing setting " + settingName + " in " + guildID);
+				return result.value;
+			}
 		}
+		return null;
+    },
+	
+	getTriggerTable: async function (lang) {
+		const guildCollection = mainDB.collection("Global");
+		const settingToFind = { setting: "triggerTable-" + lang }
+		var result = await findOneCatch(guildCollection, settingToFind);
+		if (result) return result.value;
+		else { logger.error("Error while finding trigger table " + settingToFind); }
     },
 	
 	getAllServers: async function () {

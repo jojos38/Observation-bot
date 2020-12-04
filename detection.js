@@ -4,40 +4,52 @@ const perspectiveClient = require('perspective-api-client');
 const perspective = new perspectiveClient({apiKey: config.apikey});
 
 module.exports = {
-	analyze: async function (message, debug, config, severity) {
+	analyze: async function (message, debug, triggerTable, config, severity) {
 		try {
+			// Remove unwanted values (those disabled by the user)
+			for(let attribute in triggerTable.scan.requestedAttributes) {
+				if (!config[attribute]) config[attribute] = {offset:0, enabled:true};
+				if (!config[attribute].enabled) delete triggerTable.scan.requestedAttributes[attribute];
+			}
 			// Send request
-			config.scan.comment.text = message;
-			const result = await perspective.analyze(config.scan);
+			triggerTable.scan.comment.text = message;
+			const result = await perspective.analyze(triggerTable.scan);
 
 			// Settings
-			const attributesTotal = tools.objSize(config.scan.requestedAttributes);
+			const attributesTotal = tools.objSize(result.attributeScores);
 			var total = 0
 			var multiple = 0;
 			var score = {positive:false, values:{}, detectedLanguages: result.detectedLanguages};
 
 			// Check each score attribute
-			for(let type in result.attributeScores) {
-				let value = Math.round(result.attributeScores[type].summaryScore.value*1000);
+			for(let attribute in result.attributeScores) {
+				let value = Math.round(result.attributeScores[attribute].summaryScore.value*1000);
 				total += value;
 				// If a single value exceed a high value
-				if (value > config.single[type][severity]) {
+				var singleTrigger = triggerTable.single[attribute][severity];
+				singleTrigger = singleTrigger + ((1000-singleTrigger) / 100 * (config[attribute].offset));
+				var multipleTrigger = triggerTable.multiple[attribute][severity];
+				multipleTrigger = multipleTrigger + ((1000-multipleTrigger) / 100 * (config[attribute].offset));
+
+				if (value > singleTrigger) {
 					score.positive = true;
-					score.values[config.translationTable[type]] = value;
+					score.values[triggerTable.translationTable[attribute]] = value;
 				}
 				// If multiple value exceed but lower values
-				else if (value > config.multiple[type][severity] || debug) { // Max value is 100
+				else if (value > multipleTrigger || debug) { // Max value is 100
+					console.log(multipleTrigger);
 					multiple += 1;
-					score.values[config.translationTable[type]] = value;
+					score.values[triggerTable.translationTable[attribute]] = value;
 				}
             }
-            if (multiple >= config.minMultipleTrigger) score.positive = true;
-
+            if (multiple >= triggerTable.minMultipleTrigger) score.positive = true;
 			// Check message average score
 			var average = Math.round(total/attributesTotal);
-			if ((average > config.averageTrigger && !score.positive) || debug) { // Max value is 1000
+			var averageTrigger = triggerTable.averageTrigger;
+			averageTrigger = averageTrigger + ((1000-averageTrigger) / 100 * (config['AVERAGE'].offset));
+			if ((average > averageTrigger && !score.positive) || debug) { // Max value is 1000
 				score.positive = true;
-				score.values[config.translationTable["AVERAGE"]] = average;
+				score.values[triggerTable.translationTable["AVERAGE"]] = average;
 			}
 
 			return score;

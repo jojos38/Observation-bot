@@ -170,10 +170,12 @@ async function checkMessage(lang, message, debug) {
 		// If the API detected the message as another language, then we check for this language too
 		if (!positive && result.detectedLanguages) {
 			for(let language of result.detectedLanguages) {
-				otherResult = await lm.analyze(guildID, language, messageContent, debug, await db.getSetting(guildID, "severity"));
-				if (otherResult.positive) {
-					positive = true;
-					result = otherResult;
+				if (language != lang) {
+					otherResult = await lm.analyze(guildID, language, messageContent, debug, await db.getSetting(guildID, "severity"));
+					if (otherResult.positive) {
+						positive = true;
+						result = otherResult;
+					}
 				}
 			}
 		}
