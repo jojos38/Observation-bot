@@ -71,7 +71,7 @@ module.exports = {
 			process.exit(1);
 		}
     },
-	
+
     close: function () {
         client.close();
 		logger.success("Database closed");
@@ -135,14 +135,14 @@ module.exports = {
 		if (!result) logger.error("Error while getting guild channels for guild " + guildID);
 		return result || []
     },
-	
+
     getChannelLang: async function (guildID, channelID) {
 		const guildCollection = mainDB.collection(guildID);
 		var result = await findOneCatch(guildCollection, { channel: channelID });
 		if (!result) logger.error("Error while getting channel lang for guild " + guildID + " and channel " + channelID);
 		return result.lang || {};
     },
-	
+
 	setChannelLang: async function (guildID, channelID, lang) {
 		const guildCollection = mainDB.collection(guildID);
 		const channelToFind = { channel: channelID };
@@ -194,13 +194,13 @@ module.exports = {
 		if (result) return result.value;
 		else { logger.error("Error while finding trigger table " + settingToFind); }
     },
-	
+
 	getAllServers: async function () {
 		var result = (await listCatch(mainDB)).toArray();
 		if (!result) logger.error("Error while getting all servers from mainDB");
 		return result || [];
     },
-	
+
 	incrementCounter: async function () {
 		const guildCollection = mainDB.collection("Global");
 		const settingToFind = { setting: "counter" };
@@ -208,14 +208,14 @@ module.exports = {
 		if (result) await updateOneCatch(guildCollection, settingToFind, { $set: { value: result.value+1 } });
 		else logger.error("Error while incrementing counter");
     },
-	
+
 	getCounter: async function () {
 		const guildCollection = mainDB.collection("Global");
 		var result = await findOneCatch(guildCollection, { setting: "counter" });
 		if (!result) logger.error("Error while getting counter");
 		return result.value || -1;
     },
-	
+
 	warnUser: async function (guildID, userID) {
 		const guildCollection = mainDB.collection(guildID);
 		var result = await findOneCatch(guildCollection, { user: userID });
@@ -225,7 +225,7 @@ module.exports = {
 			if (result.warns.length > 32) result.warns = removeSmallest(result.warns); 
 			var ok = await updateOneCatch(guildCollection, toUpdate, { $set: {user: userID, warns: result.warns} });
 			if (ok) logger.info("User updated and warned successfully");
-			else logger.error("Errir while updating and warning user");			
+			else logger.error("Errir while updating and warning user");
 		}
 		else {
 			var ok = await insertOneCatch(guildCollection, { user: userID, warns: [Date.now()] });
@@ -233,14 +233,14 @@ module.exports = {
 			else logger.error("Error adding and warning user");
 		}
 	},
-	
-	generateToken: async function (guildID, lang) {		
+
+	generateToken: async function (guildID, lang) {
 		const token = require('crypto').randomBytes(32).toString('hex');
 		const guildCollection = mainDB.collection(guildID);
 		var result = await findOneCatch(guildCollection, {token: {$exists: true}}, { projection: { _id: 0} });
 		if (result) {
 			const toUpdate = { token: result.token };
-			var result = await updateOne(guildCollection, toUpdate, { $set: {token: token, date: Date.now()} });
+			var result = await updateOneCatch(guildCollection, toUpdate, { $set: {token: token, date: Date.now()} });
 			if (result) logger.info("Document token updated successfully");
 			else logger.error("Error while updating token");
 		}
@@ -249,6 +249,7 @@ module.exports = {
 			if (result) logger.info("Document token inserted successfully");
 			else logger.error("Error while inserting token");
 		}
+		return token;
     }
     // ------------------------------------- SOME FUNCTIONS ------------------------------------- //
 }

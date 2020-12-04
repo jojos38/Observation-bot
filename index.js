@@ -446,7 +446,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
     else if (messageContent.startsWith(`${prefix}reset`)) { // remove [ADMIN]
 		await db.resetGuildSettings(guild.id, guild.name, channel, lang);
 		initSettings(guild);
@@ -484,7 +484,6 @@ client.on('message', async function (message) {
 				tools.sendCatch(channel, lm.getString("configLink", lang));
 				tools.sendCatch(channel, link);
 			}
-			//tools.sendCatch(channel, "link");
 		} else {
 			tools.sendCatch(channel, lm.getString("configConfirm", lang, {prefix:prefix}));
 		}
