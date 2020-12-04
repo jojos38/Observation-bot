@@ -182,6 +182,8 @@ module.exports = {
 				if (ok) logger.info("Setting " + settingName + " was missing in " + guildID + " and was added");
 				else logger.error("Error while adding missing setting " + settingName + " in " + guildID);
 				return result.value;
+			} else {
+				logger.error("Could not find default setting " + settingName + " in database");
 			}
 		}
 		return null;

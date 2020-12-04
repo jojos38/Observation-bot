@@ -46,7 +46,7 @@ module.exports = {
 	analyze: async function(guildID, lang, message, debug, severity) {
 		var locales = i18n.getLocales();
 		if (locales.includes(lang))
-			return detection.analyze(message, debug, await db.getTriggerTable(lang), await db.getSetting(guildID, "triggerTable-" + lang) || {}, severity);
+			return detection.analyze(message, debug, await db.getTriggerTable(lang), await db.getSetting(guildID, "S-triggerTable-" + lang) || {}, severity);
 		else {
 			logger.warn("Language " + lang + " does not exists");
 			return {positive:false};
