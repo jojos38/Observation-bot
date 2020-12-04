@@ -11,7 +11,7 @@ module.exports = {
 				if (!config[attribute]) config[attribute] = {offset:0, enabled:true};
 				if (!config[attribute].enabled) delete triggerTable.scan.requestedAttributes[attribute];
 			}
-			if (!config['AVERAGE']) config['AVERAGE'] = triggerTable['AVERAGE'];
+			if (!config['AVERAGE']) config['AVERAGE'] = {offset:0};
 			// Send request
 			triggerTable.scan.comment.text = message;
 			const result = await perspective.analyze(triggerTable.scan);
@@ -27,6 +27,7 @@ module.exports = {
 				let value = Math.round(result.attributeScores[attribute].summaryScore.value*1000);
 				total += value;
 				// If a single value exceed a high value
+
 				var singleTrigger = triggerTable.single[attribute][severity];
 				singleTrigger = singleTrigger + ((1000-singleTrigger) / 100 * (config[attribute].offset));
 				var multipleTrigger = triggerTable.multiple[attribute][severity];
