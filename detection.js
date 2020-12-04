@@ -11,6 +11,7 @@ module.exports = {
 				if (!config[attribute]) config[attribute] = {offset:0, enabled:true};
 				if (!config[attribute].enabled) delete triggerTable.scan.requestedAttributes[attribute];
 			}
+			if (!config['AVERAGE']) config['AVERAGE'] = triggerTable['AVERAGE'];
 			// Send request
 			triggerTable.scan.comment.text = message;
 			const result = await perspective.analyze(triggerTable.scan);
