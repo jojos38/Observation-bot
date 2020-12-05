@@ -4,7 +4,7 @@
 - Tipeee: https://fr.tipeee.com/jojos38s-quizzar-bot
 
 >Observation is a powerful bot based on a Deep  Learning algorithm called Perspective API. It's working to remove any kind of insults and toxicity on your server. Observation can give a summary of why a message have been deleted, you can customize the behavior such as message deletion and much more.\
-The bot is still experimental and false positive may happen. This is the reason why the bot doesn't have mute system yet.\
+The bot is still experimental and false positive may happen. This is the reason why the bot doesn't have mute system yet.
 
 Features:
 - Web interface configuration
@@ -16,10 +16,10 @@ Features:
 - Custom prefix
 
 -----
-> - Type !ohelp to start using the bot
-> - The bot will only work in channel where it has been enabled (!oadd) or if it has enabled globally (!oglobal true)
-> - The main bot language can be set using !olang, specific languages can be set channel wise using !ochannellang, this should be used if your Discord is using multiple languages!
-> - The bot does not store any message in it's database under any circumstance
+ - Type !ohelp to start using the bot
+ - The bot will only work in channel where it has been enabled (!oadd) or if it has enabled globally (!oglobal true)
+ - The main bot language can be set using !olang, specific languages can be set channel wise using !ochannellang, this should be used if your Discord is using multiple languages!
+ - The bot does not store any message in it's database under any circumstance
 -----
 
 Special thanks to Perspective API for their API.\
