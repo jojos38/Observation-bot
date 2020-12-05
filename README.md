@@ -5,7 +5,6 @@
 
 >Observation is a powerful bot based on a Deep  Learning algorithm called Perspective API. It's working to remove any kind of insults and toxicity on your server. Observation can give a summary of why a message have been deleted, you can customize the behavior such as message deletion and much more.\
 The bot is still experimental and false positive may happen. This is the reason why the bot doesn't have mute system yet.\
-If you have any issue you can join the help Discord to report anything!
 
 Features:
 - Web interface configuration
@@ -23,10 +22,10 @@ Features:
 > - The bot does not store any message in it's database under any circumstance
 -----
 
-Special thanks to Perspective API for their API.
+Special thanks to Perspective API for their API.\
 Support server: contact jojos38#1337
 
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
 
 ## Get started
 Invite the bot on your Discord using this link:
@@ -37,4 +36,4 @@ Use !oprefix to set your preferred prefix (optionnal)
 Use !oadd to enable the bot on any channel or use !oglobal true to moderate every channels
 Enjoy!
 
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
