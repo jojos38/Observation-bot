@@ -139,8 +139,8 @@ module.exports = {
     getChannelLang: async function (guildID, channelID) {
 		const guildCollection = mainDB.collection(guildID);
 		var result = await findOneCatch(guildCollection, { channel: channelID });
-		if (!result) logger.error("Error while getting channel lang for guild " + guildID + " and channel " + channelID);
-		return result.lang || {};
+		if (!result) { logger.error("Error while getting channel lang for guild " + guildID + " and channel " + channelID); return "en"; }
+		return result.lang;
     },
 
 	setChannelLang: async function (guildID, channelID, lang) {
