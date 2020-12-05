@@ -1,6 +1,7 @@
 const logger = require('./logger.js');
 
 function post(hostname, path, data, token) {
+	if (!token) { logger.error("Error: no token provided for " + hostname); return; }
 	const https = require('https');
 	data = JSON.stringify(data);
 	const options = {
@@ -60,6 +61,6 @@ function queryAndSend(client) {
 
 module.exports = {
 	init: function(client) {
-		setInterval(function() { queryAndSend(client) }, 300000); //logs hi every second
+		setInterval(function() { queryAndSend(client) }, 30000);
 	}
 }
