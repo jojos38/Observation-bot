@@ -39,7 +39,6 @@ module.exports = {
 				}
 				// If multiple value exceed but lower values
 				else if (value > multipleTrigger || debug) { // Max value is 100
-					console.log(multipleTrigger);
 					multiple += 1;
 					score.values[triggerTable.translationTable[attribute]] = value;
 				}

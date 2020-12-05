@@ -534,8 +534,10 @@ client.on('message', async function (message) {
 		const dbguilds = await db.getAllServers();
 		for (var entry of dbguilds) {
 			var dbGuildID = entry.name;
-			if (!guilds.get(dbGuildID))
+			if (!guilds.get(dbGuildID) && dbGuildID.match(/^[0-9]{18}$/)) {
 				db.resetGuildSettings(dbGuildID, dbGuildID, null, null);
+				logger.info("Deleted settings for guild " + dbGuildID);
+			}
 		}
 		logger.success("Command clean OK");
     }
@@ -545,7 +547,8 @@ client.on('message', async function (message) {
 		const tempdbguilds = await db.getAllServers();
 		var dbguilds = [];
 		for (var entry of tempdbguilds) {
-			dbguilds[entry.name] = true;
+			if (entry.name.match(/^[0-9]{18}$/))
+				dbguilds[entry.name] = true;
 		}
 		for (var id of guilds.keys()) {
 			if (dbguilds[id]) { // If the guild exists in the database
@@ -569,6 +572,7 @@ client.on('message', async function (message) {
 			if (!dbguilds[id]) {
 				const tempGuild = guilds.get(id);
 				initSettings(tempGuild);
+				logger.info("Initialized settings for guild " + id);
 			}
 		}
 		logger.success("Command restore OK");
