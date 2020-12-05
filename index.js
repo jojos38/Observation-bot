@@ -17,7 +17,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const tools = require('./tools.js');
 const logger = require('./logger.js');
-const dbl = require('./dbl.js');
+const apiManager = require('./api-manager.js');
 // -------------------- SOME VARIABLES -------------------- //
 
 
@@ -589,8 +589,8 @@ async function start() {
     await db.init();
 	await lm.reloadLanguages(); // Load languages
 	logger.info("Connecting to Discord...");
-    client.login(config.token);
-	dbl.init(client);
+    await client.login(config.token);
+	apiManager.init(client);
 }
 start();
 // ------- START ------- //
