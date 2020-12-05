@@ -104,10 +104,10 @@ module.exports = {
         var result = await insertOneCatch(guildCollection, { channel: channelID, lang: "auto" });
 		if (result) {
 			await tools.sendCatch(channel, lm.getString("channelAdded", lang));
-			logger.info("Channel " + channelID + " inserted successfully");
+			logger.info("Channel " + channelID + " inserted successfully in guild " + channel.guild.id);
 		} else {
 			tools.sendCatch(channel, lm.getString("error", lang));
-			logger.error("Error while inserting channel " + channelID);
+			logger.error("Error while inserting channel " + channelID + " in guild " + channel.guild.id);
 		}
     },
 

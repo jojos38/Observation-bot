@@ -3,7 +3,7 @@ const DEFAULT_LANGUAGE = "en";
 const DEFAULT_PREFIX = "!o"
 const OWNER_ID = 137239068567142400;
 const MIN_MSG_LEN = 3;
-const MAX_MSG_LEN = 1000;
+const MAX_MSG_LEN = 2000;
 const ACTIVITY_MESSAGE = "!ohelp";
 // -------------------- SETTINGS -------------------- //
 
@@ -133,10 +133,10 @@ async function checkMessage(lang, message, debug) {
 		lang = channelLang;
 
 	// Remove emotes from the message
-	var emotes = messageContent.match(/<:.+?:\d+>/g);
-	if (emotes) {
-		for (let emote of emotes) {
-			messageContent = messageContent.replace(emote, "");
+	var illegal = messageContent.match(/<(@!|#)[0-9]{18}>|<a{0,1}:[a-zA-Z0-9_.]{2,32}:[0-9]{18}>/g);
+	if (illegal) {
+		for (let part of illegal) {
+			messageContent = messageContent.replace(part, "");
 		}
 	}
 

@@ -61,6 +61,6 @@ function queryAndSend(client) {
 
 module.exports = {
 	init: function(client) {
-		setInterval(function() { queryAndSend(client) }, 900000);
+		setInterval(function() { queryAndSend(client) }, 7200000);
 	}
 }
