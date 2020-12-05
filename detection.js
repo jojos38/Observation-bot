@@ -56,7 +56,7 @@ module.exports = {
 
 			return score;
 		} catch (error) {
-			logger.warn(error);
+			logger.warn(error + " for message " + message);
 			return {positive:false, detectedLanguages:[]};
 		}
 	}

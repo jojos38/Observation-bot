@@ -211,7 +211,7 @@ async function addList(message, lang, args, list) {
 		tools.sendCatch(channel, lm.getString("listFullError", lang, {list:list}));
 		return;
 	}
-	
+
 	// Reconstruct the word
 	var word = "";
 	for (var i = 2; i < args.length; i++)
@@ -259,7 +259,7 @@ client.on('messageUpdate', async function (oldMessage, newMessage) {
 	// Get guilds settings
 	const prefix = await db.getSetting(guild.id, "prefix") || DEFAULT_PREFIX;
 	const lang = await db.getSetting(guild.id, "lang") || DEFAULT_LANGUAGE;
-	
+
 	// Analyze message
 	if (Math.abs(oldMessage.content.length - newMessage.content.length) > 3) {
 		if (await channelAllowed(guild.id, newMessage) || await db.getSetting(guild.id, "global")) {
@@ -275,10 +275,10 @@ client.on('message', async function (message) {
 	// Check if the message is not a PM
 	const guild = message.guild;
 	if (!guild) return;
-	
+
 	// Check if the message is not from a bot
 	if(message.author.bot) return;
-	
+
 	// Get guilds settings
 	const prefix = await db.getSetting(guild.id, "prefix") || DEFAULT_PREFIX;
 	const lang = await db.getSetting(guild.id, "lang") || DEFAULT_LANGUAGE;
@@ -288,7 +288,7 @@ client.on('message', async function (message) {
 		const debug = await db.getSetting(guild.id, "debug");
 		checkMessage(lang, message, debug);
 	}
-	
+
 	// Check if it's a command
 	// Check if the message starts with prefix
 	const messageContent = message.content.toLowerCase(); // Get message to lower case
@@ -321,7 +321,7 @@ client.on('message', async function (message) {
 		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, servers.size, tools.format(uptime), counter));
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}analyze`)) { // info
 		var tempMsg = message;
 		tempMsg.content = tempMsg.content.replace(prefix + "analyze ", "");
@@ -335,9 +335,9 @@ client.on('message', async function (message) {
 	// If moderator allowed to send the command
 	if (!await isModeratorAllowed(message)) { tools.sendCatch(message.channel, lm.getString("noPermission", lang)); return; }
 	// #################################################### MODERATOR COMMANDS #################################################### //
-	
-	
-	
+
+
+
     if (messageContent.startsWith(`${prefix}add`)) { // add [ADMIN]
 		db.addGuildChannel(channel, lang);
 		return;
@@ -347,7 +347,7 @@ client.on('message', async function (message) {
 		db.removeGuildChannel(channel, lang);
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}channellang`)) { // remove [ADMIN]
 		const langs = lm.getLocales();
 		const commandLang = (args[1] || "");
@@ -359,7 +359,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}severity`)) { // remove [ADMIN]
 		if (args[1] == "low") {
 			db.setSetting(guild.id, "severity", "low");
@@ -377,7 +377,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
     else if (messageContent.startsWith(`${prefix}delay`)) { // delete delay [ADMIN]
 		if (args[1] <= 30000 && args[1] >= 1000 && tools.isInt(args[1])) {
 			db.setSetting(guild.id, "deleteDelay", args[1]);
@@ -387,7 +387,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}debug`)) { // delete delay [ADMIN]
 		if (args[1] == "true" || args[1] == "false") {
 			var finalValue = args[1] == "true";
@@ -398,7 +398,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}global`)) { // global [ADMIN]
 		if (args[1] == "true" || args[1] == "false") {
 			var finalValue = args[1] == "true";
@@ -409,17 +409,17 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}whitelist`)) { // global [ADMIN]
 		addList(message, lang, args, "whitelist");
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}blacklist`)) { // global [ADMIN]
 		addList(message, lang, args, "blacklist");
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}warn`)) { // warn message [ADMIN]
 		if (args[1] == "true" || args[1] == "false") {
 			var finalValue = args[1] == "true";
@@ -430,7 +430,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
 	else if (messageContent.startsWith(`${prefix}delete`)) { // delete message [ADMIN]
 		if (args[1] == "true" || args[1] == "false") {
 			var finalValue = args[1] == "true";
@@ -441,7 +441,7 @@ client.on('message', async function (message) {
 		}
 		return;
     }
-	
+
     else if (messageContent.startsWith(`${prefix}prefix`)) { // remove [ADMIN]
 		// If not empty, less than 4 characters and ASCII only
 		if ((args[1] || "").length <= 4 && args[1] && /^[\x00-\x7F]*$/.test(args[1])) {

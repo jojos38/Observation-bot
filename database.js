@@ -137,13 +137,17 @@ module.exports = {
     },
 
     getChannelLang: async function (guildID, channelID) {
+		const global = await db.getSetting(guildID, "global");
 		const guildCollection = mainDB.collection(guildID);
 		var result = await findOneCatch(guildCollection, { channel: channelID });
-		if (!result) { logger.error("Error while getting channel lang for guild " + guildID + " and channel " + channelID); return "en"; }
+		if (!result) {
+			if (global) return "auto";
+			else { logger.error("Error while getting channel lang for channel " + channelID + " in " + guildID); return "auto";  }
+		}
 		return result.lang;
     },
 
-	setChannelLang: async function (guildID, channelID, lang) {
+    setChannelLang: async function (guildID, channelID, lang) {
 		const guildCollection = mainDB.collection(guildID);
 		const channelToFind = { channel: channelID };
 		var result = await findOneCatch(guildCollection, channelToFind);
