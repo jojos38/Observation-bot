@@ -1,4 +1,5 @@
 const DBL = require("dblapi.js");
+const logger = require('./logger.js');
 
 module.exports = {
 	init: function(client) {

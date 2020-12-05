@@ -590,7 +590,7 @@ async function start() {
 	await lm.reloadLanguages(); // Load languages
 	logger.info("Connecting to Discord...");
     client.login(config.token);
-	//dbl.init(client);
+	dbl.init(client);
 }
 start();
 // ------- START ------- //
