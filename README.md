@@ -1,16 +1,27 @@
 # Observation-Bot
 
-Observation bot is a Discord bot which scans for users messages and delete the bad messages.
-Observation bot can detect avoidances such as putting # - * etc...
-It can do the difference between insulting yourself or someone else
-Detect racism, personnal attacks and much more!
+- Patreon: https://www.patreon.com/jojos38
+- Tipeee: https://fr.tipeee.com/jojos38s-quizzar-bot
 
-A lot of functions are coming in the future, for now the bot has a blacklist and a whitelist system, you can set the bot to work only in specific channels or every channels it has access to.
+>Observation is a powerful bot based on a Deep  Learning algorithm called Perspective API. It's working to remove any kind of insults and toxicity on your server. Observation can give a summary of why a message have been deleted, you can customize the behavior such as message deletion and much more.\
+The bot is still experimental and false positive may happen. This is the reason why the bot doesn't have mute system yet.\
+If you have any issue you can join the help Discord to report anything!
 
-- Most of the permissions are not required, they are here for future uses
-- This bot is experimental and still under testing
-- The bot does NOT store any message under any circumstance.
-- The API calls ask for the API to NOT store the messages
+Features:
+- Web interface configuration
+- Per channel enable and language
+- Supports multiple languages (!olang to see the languages)
+- Based on a powerful Deep Learning algorithm
+- Supports messages edits
+- Lots of settings
+- Custom prefix
+
+-----
+> - Type !ohelp to start using the bot
+> - The bot will only work in channel where it has been enabled (!oadd) or if it has enabled globally (!oglobal true)
+> - The main bot language can be set using !olang, specific languages can be set channel wise using !ochannellang, this should be used if your Discord is using multiple languages!
+> - The bot does not store any message in it's database under any circumstance
+-----
 
 Special thanks to Perspective API for their API.
 Support server: contact jojos38#1337
@@ -27,65 +38,3 @@ Use !oadd to enable the bot on any channel or use !oglobal true to moderate ever
 Enjoy!
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-## User commands
-
-- !ohelp or !oh
-- - Show help"
-
-- !oinfo
-- - Show information about the bot"
-
-- !oadmin
-- - Show admin commands
-- - Note: Require 'manage server' permission
-
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-## Admin commands
-
-An 'Authorized channel' is a channel where the bot is going to operate.
-
-- !oprefix
-- - Change the bot prefix
-
-- !olang [language]
-- - Change the global language of the bot (Use ISO 631-1, example: fr, es ,en)
-
-- !oadd
-- - Add the current channel in the authorized channels
-
-- !oremove
-- - Remove the current channel from the authorized channels
-
-- !ochannellang
-- - Set the default lang for a specific channel (Use ISO 631-1, example: fr, es ,en) (Default: auto)
-
-- !oanalyze [text]
-- - Analyze your message and give you a score
-
-- !oreset
-- - Delete all bot data from the server (Authorized channels etc...)
-- - **Warning:** This command also delete all users stats! (Still not implemented)
-
-- !ochannels
-- - Show all authorized channels
-
-- !odelay
-- - Set the delay before the warning message is deleted (between 1000ms and 30000ms)
-
-- !odelete
-- - Define either the message should be deleted or not (true or false)
-
-- !odebug
-- - Show debbuging information (true or false)
-
-- !owarn
-- - Show warning messages (true or false)
-
-- !oglobal
-- - Set if the bot should moderate every channels of the server (true or false)
-
-- !owhitelist / blacklist [add / remove] [a word]
-- - If no parameter, shows the list, if add or remove followed by a word, adds or removes this word from the list.
-- - Example: !owhitelist add I like train
