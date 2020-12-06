@@ -12,8 +12,9 @@ Features:
 - Supports multiple languages (!olang to see the languages)
 - Based on a powerful Deep Learning algorithm
 - Supports messages edits
-- Lots of settings
 - Custom prefix
+- Different type of flags such as toxicity, insult and many more. Each flag can be set with higher or lower sentivity or disabled.
+- A whitelist and a blacklist allowing for custom words to be bypassed or to be instantly flagged.
 
 -----
  - Type !ohelp to start using the bot
