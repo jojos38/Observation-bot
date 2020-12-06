@@ -133,7 +133,7 @@ async function checkMessage(lang, message, debug) {
 		lang = channelLang;
 
 	// Remove emotes from the message
-	var illegal = messageContent.match(/<(@!|#)[0-9]{18}>|<a{0,1}:[a-zA-Z0-9_.]{2,32}:[0-9]{18}>/g);
+	var illegal = messageContent.match(/<(@!|#|@)[0-9]{18}>|<a{0,1}:[a-zA-Z0-9_.]{2,32}:[0-9]{18}>/g);
 	if (illegal) {
 		for (let part of illegal) {
 			messageContent = messageContent.replace(part, "");
