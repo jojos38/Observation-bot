@@ -135,10 +135,6 @@ module.exports = {
                     value: "Défini si les messages doivent être supprimés (true ou false)"
                 },
 				{
-                    name: prefix + "debug",
-                    value: "Affiche les informations de débogage (true ou false)"
-                },
-				{
                     name: prefix + "warn",
                     value: "Affiche les messages d'avertissement (true ou false)"
                 },

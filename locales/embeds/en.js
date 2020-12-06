@@ -135,10 +135,6 @@ module.exports = {
                     value: "Define either the message should be deleted or not (true or false)"
                 },
 				{
-                    name: prefix + "debug",
-                    value: "Show debbuging information (true or false)"
-                },
-				{
                     name: prefix + "warn",
                     value: "Show warning messages (true or false)"
                 },

@@ -132,14 +132,25 @@ async function checkMessage(lang, message, debug) {
 	if (channelLang != "auto")
 		lang = channelLang;
 
-	// Remove emotes from the message
+	// Remove emotes, mentions and emojis from the message
 	var illegal = messageContent.match(/<(@!|#|@)[0-9]{18}>|<a{0,1}:[a-zA-Z0-9_.]{2,32}:[0-9]{18}>/g);
 	if (illegal) {
 		for (let part of illegal) {
 			messageContent = messageContent.replace(part, "");
 		}
 	}
-
+	
+	// Remove urls from the message if it's ignored
+	if (await db.getSetting(guildID, "ignoreURL")) {
+		var urlExpression = /https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/gi;
+		var illegal = messageContent.match(urlExpression);
+		if (illegal) {
+			for (let part of illegal) {
+				messageContent = messageContent.replace(part, "");
+			}
+		}
+	}
+	
 	// Remove white-list words
 	const whitelist = await db.getSetting(guildID, "whitelist");
 	if (whitelist)
