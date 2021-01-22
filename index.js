@@ -18,6 +18,7 @@ const client = new Discord.Client();
 const tools = require('./tools.js');
 const logger = require('./logger.js');
 const apiManager = require('./api-manager.js');
+var isBotReady = false;
 // -------------------- SOME VARIABLES -------------------- //
 
 
@@ -98,8 +99,13 @@ process.on('uncaughtException', exitHandler.bind(null,{exit:true})); //catches u
 
 // ---------------------------------------------- LISTENERS ---------------------------------------------- //
 client.once('ready', async function () {
+    isBotReady = true;
     logger.success('Bot ready');
     client.user.setActivity(ACTIVITY_MESSAGE);
+});
+
+client.on("disconnect", () => {
+    logger.error("Connection to Discord's servers lost!");
 });
 
 client.on("channelDelete", function (channel) {
@@ -139,7 +145,7 @@ async function checkMessage(lang, message, debug) {
 			messageContent = messageContent.replace(part, "");
 		}
 	}
-	
+
 	// Remove urls from the message if it's ignored
 	if (await db.getSetting(guildID, "ignoreURL")) {
 		var urlExpression = /https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/gi;
@@ -150,9 +156,10 @@ async function checkMessage(lang, message, debug) {
 			}
 		}
 	}
-	
+
 	// Remove white-list words
 	const whitelist = await db.getSetting(guildID, "whitelist");
+	whitelist.push("||"); // For some reason, || are causing some issues
 	if (whitelist)
 		for(let word of whitelist)
 			if (word.length > 0) messageContent = messageContent.replace(word, '');
@@ -600,12 +607,20 @@ client.on('message', async function (message) {
 
 
 // ------- START ------- //
+function checkConnected() {
+    if (!isBotReady) {
+        logger.error("Bot wasn't ready in time... Rebooting...");
+        process.exit(1);
+    }
+}
+
 async function start() {
     await db.init();
-	await lm.reloadLanguages(); // Load languages
-	logger.info("Connecting to Discord...");
+    await lm.reloadLanguages(); // Load languages
+    logger.info("Connecting to Discord...");
+    setTimeout(checkConnected, 300000);
     await client.login(config.token);
-	apiManager.init(client);
+    apiManager.init(client);
 }
 start();
 // ------- START ------- //
