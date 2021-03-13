@@ -92,7 +92,11 @@ module.exports = {
             fields: [
 				{
 					name: prefix + "config",
-					value: "**NEW** Configure the bot trough a web interface"
+					value: "Configure the bot trough a web interface"
+				},
+				{
+					name: prefix + "log",
+					value: "**new** Define the channel of the command as the log channel"
 				},
 				{
 					name: prefix + "prefix",
@@ -108,11 +112,11 @@ module.exports = {
                 },	
                 {
                     name: prefix + "add",
-                    value: "Add the current channel in the authorized channels"
+                    value: "Add the channel of the command in the authorized channels"
                 },
                 {
                     name: prefix + "remove",
-                    value: "Remove the current channel from the authorized channels"
+                    value: "Remove the channel of the command from the authorized channels"
                 },
                 {
                     name: prefix + "channellang",

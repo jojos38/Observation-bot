@@ -95,6 +95,10 @@ module.exports = {
 					value: "**NEW** Configuez le bot à travers une interface web"
 				},
 				{
+					name: prefix + "log",
+					value: "**new** Défini le channel où est tapée la commande comme channel de log"
+				},
+				{
 					name: prefix + "prefix",
 					value: "Changer le préfix du bot"
 				},
@@ -108,11 +112,11 @@ module.exports = {
                 },
                 {
                     name: prefix + "add",
-                    value: "Ajoute le channel où est lancé la commande dans la liste des channel autorisés\n**Note** : Si aucun channel n'est spécifié, tous les channels seront autorisés"
+                    value: "Ajoute le channel où est tapée la commande dans la liste des channel autorisés\n**Note** : Si aucun channel n'est spécifié, tous les channels seront autorisés"
                 },
                 {
                     name: prefix + "remove",
-                    value: "Retire le channel où est lancé la commande de la liste des channels autorisés"
+                    value: "Retire le channel où est tapée la commande de la liste des channels autorisés"
                 },
                 {
                     name: prefix + "channellang",
