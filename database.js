@@ -241,7 +241,7 @@ module.exports = {
 	generateToken: async function (guildID, lang) {
 		const token = require('crypto').randomBytes(32).toString('hex');
 		const guildCollection = mainDB.collection(guildID);
-		var result = await findOneCatch(guildCollection, {token: {$exists: true}}});
+		var result = await findOneCatch(guildCollection, {token: {$exists: true}});
 		if (result) {
 			const toUpdate = { token: result.token };
 			var result = await updateOneCatch(guildCollection, toUpdate, { $set: {token: token, date: Date.now()} });

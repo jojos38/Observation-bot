@@ -6,6 +6,8 @@
 	"thanks": "Merci d'utiliser Quizzar ! Tapez !jhelp dans n'importe quel channel de votre serveur pour voir la liste des commandes.",
 	"alreadyAuthorized": "Ce salon est déjà dans la liste des salons autorisés.",
 	"channelAdded": "Le salon a été ajouté avec succés.",
+	"logChannelAdded": "Le salon actuel a été défini comme salon pour les logs. Tapez la commande à nouveau pour retirer ce channel.",
+	"logChannelRemoved": "Ce channel ne sera plus utilisé comme channel pour les logs.",
 	"resetted": "Paramètres réinitialisés.",
 	"resettedError": "Une erreur est survenue lors de la suppression des paramètres: aucun paramètre existant.",
 	"channelNotInList": "Ce salon n'est pas dans la liste des channels autorisés.",
@@ -33,5 +35,5 @@
 	"configLink": "Voici votre lien de configuration, ne donnez pas ce lien publiquement !\nCe dernier est valable 10 minutes.\nSeul le dernier lien généré est valable.",
 	"severitySet": "La sévérité du bot a été définie sur {{severity}}",
 	"severityError": "Ce niveau de sévérité n'existe pas. Merci d'utiliser low, medium ou high.",
-	"error": "Une erreur inconnue est survenue."
+	"error": "Une erreur inconnue est survenue, si l'erreur persiste vous pouvez rejoindre le Discord de support du bot."
 }
