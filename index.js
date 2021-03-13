@@ -208,11 +208,37 @@ async function checkMessage(lang, message, debug) {
 	db.warnUser(guildID, message.author.id);
 
 	// React in consequence
-	if (await db.getSetting(guildID, "deleteMessage") && !debug) tools.deleteCatch(message);
+	var deleteMessage = await db.getSetting(guildID, "deleteMessage");
+	if (deleteMessage && !debug) tools.deleteCatch(message);
 	if (await db.getSetting(guildID, "warnMessage")) {
-		const warnMessage = await tools.sendCatch(message.channel, lm.getEb(lang).getWarnEmbed(result, debug));
-		await tools.delay(await db.getSetting(guildID, "deleteDelay"));
-		tools.deleteCatch(warnMessage);
+		tools.sendCatch(message.channel, lm.getEb(lang).getWarnEmbed(result, debug)).then(async (message) => {
+			await tools.delay(await db.getSetting(guildID, "deleteDelay"));
+			tools.deleteCatch(message);
+		});
+	}
+	var logChannel = await db.getSetting(guildID, "logChannel");
+	if (logChannel) {
+		warnString = "";
+		for(let type in result.values) warnString = warnString + "- " + type + " " + result.values[type]/10 + "%\n";
+		warnString = warnString.slice(0, -1);
+		var channel = client.channels.get(logChannel);
+		if (channel) {
+			var userid = message.author.id;
+			var logMessage = await db.getSetting(guildID, "logMessage");
+			var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+			var messageUrl = deleteMessage ? "[Deleted by bot]" : message.url;
+			var messageToSend = logMessage
+								.replace("{{warn}}", warnString)
+								.replace("{{userid}}", userid)
+								.replace("{{username}}", message.author.username)
+								.replace("{{usermention}}", tools.mention(userid, 'u'))
+								.replace("{{message}}", message.content)
+								.replace("{{messageurl}}", messageUrl)
+								.replace("{{date}}", date)
+								.replace("{{channelid}}", message.channel.id)
+								.replace("{{channelmention}}", tools.mention(message.channel.id, 'c'));
+			tools.sendCatch(channel, messageToSend);
+		}
 	}
 }
 
@@ -365,8 +391,19 @@ client.on('message', async function (message) {
 		db.removeGuildChannel(channel, lang);
 		return;
     }
+	
+	else if (messageContent.startsWith(`${prefix}log`)) {
+		if ((await db.getSetting(guild.id, "logChannel")) == channel.id) {
+			tools.sendCatch(channel, lm.getString("logChannelRemoved", lang));
+			db.setSetting(guild.id, "logChannel", 0);
+			return;
+		}
+		db.setSetting(guild.id, "logChannel", channel.id);
+		await tools.sendCatch(channel, lm.getString("logChannelAdded", lang));
+		return;
+	}
 
-	else if (messageContent.startsWith(`${prefix}channellang`)) { // remove [ADMIN]
+	else if (messageContent.startsWith(`${prefix}channellang`)) { // channellang [ADMIN]
 		const langs = lm.getLocales();
 		const commandLang = (args[1] || "");
 		if (langs.includes(commandLang) || commandLang == "auto") {
@@ -378,7 +415,7 @@ client.on('message', async function (message) {
 		return;
     }
 
-	else if (messageContent.startsWith(`${prefix}severity`)) { // remove [ADMIN]
+	else if (messageContent.startsWith(`${prefix}severity`)) { // severity [ADMIN]
 		if (args[1] == "low") {
 			db.setSetting(guild.id, "severity", "low");
 			tools.sendCatch(channel, lm.getString("severitySet", lang, {severity:args[1]}));

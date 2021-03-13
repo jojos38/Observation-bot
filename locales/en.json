@@ -6,6 +6,8 @@
 	"thanks": "Thanks for using Observation! Type !ohelp in any channel to the see the commands.",
 	"alreadyAuthorized": "This channel is already authorized.",
 	"channelAdded": "Channel added successfully.",
+	"logChannelAdded": "Current channel has been defined as log channel, type the command again to remove it.",
+	"logChannelRemoved": "This channel won't be used for logs anymore.",
 	"resetted": "Settings resetted.",
 	"resettedError": "Error hapenned while deleting settings: no setting existing.",
 	"channelNotInList": "This channel is not in authorized list.",
@@ -33,5 +35,5 @@
 	"configLink": "Here is your config link, do not publicly give this link!\nThe link can be used for 10 minutes.\nOnly the latest generated link is valable.",
 	"severitySet": "Severity was set to {{severity}} successfully",
 	"severityError": "This severity level does not exists, available levels are low, medium and high.",
-	"error": "An unknown error happened."
+	"error": "An unknown error happened, if the error persists, you can join the support Discord."
 }
