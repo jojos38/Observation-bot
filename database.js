@@ -226,7 +226,7 @@ module.exports = {
 		if (result) {
 			const toUpdate = { user: userID };
 			result.warns.push(Date.now());
-			if (result.warns.length > 32) result.warns = removeSmallest(result.warns); 
+			if (result.warns.length > 96) result.warns = removeSmallest(result.warns);
 			var ok = await updateOneCatch(guildCollection, toUpdate, { $set: {user: userID, warns: result.warns} });
 			if (ok) logger.info("User updated and warned successfully");
 			else logger.error("Errir while updating and warning user");

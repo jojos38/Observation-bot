@@ -22,7 +22,7 @@
     "dblapi.js": "^2.4.1",
     "discord.js": "^11.6.4",
     "i18n": "^0.8.5",
-    "mongodb": "^3.6.3",
-    "perspective-api-client": "^3.1.0"
+    "mongodb": "^3.6.4",
+    "perspective-api-client": "github:sloria/perspective-api-client"
   }
 }
