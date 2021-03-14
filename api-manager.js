@@ -51,6 +51,12 @@ function queryAndSend(client) {
 		{guildCount: guildCount},
 		config.discordbots
 	);
+	post(
+		'discord.boats',
+		'/api/bot/' + config.id,
+		{server_count: guildCount},
+		config.discordboats
+	);
 	/*post(
 		'bots.ondiscord.xyz',
 		'/bot-api/bots/' + config.id + '/guilds',
@@ -62,5 +68,6 @@ function queryAndSend(client) {
 module.exports = {
 	init: function(client) {
 		setInterval(function() { queryAndSend(client) }, 7200000);
+		// queryAndSend(client);
 	}
 }
