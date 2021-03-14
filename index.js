@@ -202,7 +202,7 @@ async function checkMessage(lang, message, debug) {
 		result = {values:{"Blacklist":"1000"}}
 	}
 
-	if (!debug) logger.info("Message '" + messageContent.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values) + " (" + message.guild.name + ")");
+	if (!debug) logger.info("Message '" + message.content.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values) + " (" + message.guild.name + ")");
 
 	// Warn the user in the db
 	db.warnUser(guildID, message.author.id);

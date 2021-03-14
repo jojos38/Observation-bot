@@ -18,10 +18,8 @@
     "url": "https://github.com/jojos38/quizzar-bot"
   },
   "dependencies": {
-    "@discordjs/uws": "^10.149.0",
-    "dblapi.js": "^2.4.1",
-    "discord.js": "^11.6.4",
-    "i18n": "^0.8.5",
+    "discord.js": "^12.5.1",
+    "i18n": "^0.13.2",
     "mongodb": "^3.6.4",
     "perspective-api-client": "github:sloria/perspective-api-client"
   }
