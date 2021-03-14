@@ -221,7 +221,7 @@ async function checkMessage(lang, message, debug) {
 		warnString = "";
 		for(let type in result.values) warnString = warnString + "- " + type + " " + result.values[type]/10 + "%\n";
 		warnString = warnString.slice(0, -1);
-		var channel = client.channels.get(logChannel);
+		var channel = client.channels.cache.get(logChannel);
 		if (channel) {
 			var userid = message.author.id;
 			var logMessage = await db.getSetting(guildID, "logMessage");
@@ -355,14 +355,14 @@ client.on('message', async function (message) {
 	}
 
 	else if (messageContent.startsWith(`${prefix}info`)) { // info
-		var servers = client.guilds;
+		var guilds = client.guilds.cache;
 		var users = 0;
-		client.guilds.forEach(g => {
+		guilds.forEach(g => {
 		  users += g.memberCount;
 		})
 		var uptime = process.uptime();
 		var counter = await db.getCounter();
-		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, servers.size, tools.format(uptime), counter));
+		tools.sendCatch(channel, lm.getEb(lang).getInfoEmbed(users, guilds.size, tools.format(uptime), counter));
 		return;
     }
 

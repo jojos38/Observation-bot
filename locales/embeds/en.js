@@ -18,7 +18,7 @@ module.exports = {
 
     // ------------- COMMANDS ------------- //
     getHelpEmbed: function (prefix) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
             color: blue,
             author: {
                 name: "Here is a list of all commands:",
@@ -47,7 +47,7 @@ module.exports = {
     },
 	
     getInfoEmbed: function (users, servers, uptime, counter) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
 			author: {
 				name: "Credit:",
 				icon_url: logoURL
@@ -82,7 +82,7 @@ module.exports = {
     },
 
     getAdminHelpEmbed: function (prefix) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
             description: "An authorized channel is a channel where bot commands are allowed.",
             color: blue,
             author: {
@@ -163,7 +163,7 @@ module.exports = {
 			//else
 			//	finalString = finalString + "- " + type + "\n";
 		}
-		const embed = new Discord.RichEmbed({
+		const embed = new Discord.MessageEmbed({
             color: red,
             title: "Warning",
             description: "Your message have been warned for the following reasons:\n" + finalString
@@ -174,7 +174,7 @@ module.exports = {
 
     // ------------- COMMANDS ERRORS ------------- //
     getNotAllowedEmbed: function (channelsString) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
             author: {
                 name: "Oops",
                 icon_url: logoURL

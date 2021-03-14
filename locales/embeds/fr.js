@@ -18,7 +18,7 @@ module.exports = {
 
     // ------------- COMMANDS ------------- //
     getHelpEmbed: function (prefix) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
             color: blue,
             author: {
                 name: "Voici la liste des commandes disponibles :",
@@ -47,7 +47,7 @@ module.exports = {
     },
 
     getInfoEmbed: function (users, servers, uptime, counter) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
 			author: {
 				name: "Crédits :",
 				icon_url: logoURL
@@ -82,7 +82,7 @@ module.exports = {
     },
 	
     getAdminHelpEmbed: function (prefix) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
             description: "Un 'channel autorisé' est un channel ou le bot modérera",
             color: blue,
             author: {
@@ -163,7 +163,7 @@ module.exports = {
 			//else
 			//	finalString = finalString + "- " + type + "\n";
 		}
-		const embed = new Discord.RichEmbed({
+		const embed = new Discord.MessageEmbed({
             color: red,
             title: "Avertissement",
             description: "Ton message a été avertit pour les raisons suivantes:\n" + finalString
@@ -174,7 +174,7 @@ module.exports = {
 
     // ------------- COMMANDS ERRORS ------------- //
     getNotAllowedEmbed: function (channelsString) {
-        const embed = new Discord.RichEmbed({
+        const embed = new Discord.MessageEmbed({
             author: {
                 name: "Mince",
                 icon_url: logoURL
