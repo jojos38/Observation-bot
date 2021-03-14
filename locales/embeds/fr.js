@@ -107,7 +107,7 @@ module.exports = {
 					value: "Défini la sévérité du bot (low, medium ou high)"
 				},
 				{
-                    name: prefix + "!jlang [langue]",
+                    name: prefix + "lang [langue]",
                     value: " - Change la langue du bot (Utilise la norme ISO 631-1, exemple: fr, es ,en)"
                 },
                 {
