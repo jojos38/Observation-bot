@@ -91,27 +91,6 @@ module.exports = {
 
 
     // ------------------------------------- SOME FUNCTIONS ------------------------------------- //
-    transfer: async function() {
-		const collections = await secDB.listCollections().toArray();
-		for (collInfos of collections) {
-			var collection = secDB.collection(collInfos.name);
-			var users = await (await findCatch(collection, {username: {$exists: true}})).toArray();
-			for (user of users) {
-				db.updateUserStats(collInfos.name, user.id, user.username, user.score, user.won);
-			}
-			
-			var settings = await (await findCatch(collection, {setting: {$exists: true}})).toArray();
-			for (setting of settings) {
-				db.setSetting(collInfos.name, setting.setting, setting.value);
-			}
-			
-			var channels = await (await findCatch(collection, {channel: {$exists: true}})).toArray();
-			for (channel of channels) {
-				db.addGuildChannel(collInfos.name, { id: channel.channel } );
-			}
-		};	
-	},
-
     resetGuildSettings: async function (guildID, guildName, channel, lang) {
 		await deleteCatch(col.channels, { guildID: guildID });
 		logger.info("Channels deleted for " + guildName);
@@ -225,16 +204,16 @@ module.exports = {
     },
 
 	warnUser: async function (guildID, userID) {
-		var result = await findOneCatch(col.usersGuild, { guildID: guildID, user: userID });
+		var result = await findOneCatch(col.usersGuild, { guildID: guildID, userID: userID });
 		if (result) {
 			result.warns.push(Date.now());
 			if (result.warns.length > 96) result.warns = removeSmallest(result.warns);
-			var ok = await updateOneCatch(col.usersGuild, { guildID: guildID, user: userID }, { $set: {user: userID, warns: result.warns} });
+			var ok = await updateOneCatch(col.usersGuild, { guildID: guildID, userID: userID }, { $set: {warns: result.warns} });
 			if (ok) logger.info("User updated and warned successfully");
 			else logger.error("Errir while updating and warning user");
 		}
 		else {
-			var ok = await insertOneCatch(col.usersGuild, { guildID: guildID, user: userID, warns: [Date.now()] });
+			var ok = await insertOneCatch(col.usersGuild, { guildID: guildID, userID: userID, warns: [Date.now()] });
 			if (ok) logger.info("User added and warned successfully");
 			else logger.error("Error adding and warning user");
 		}
