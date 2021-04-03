@@ -30,7 +30,7 @@ async function getChannelsString(guildID, lang) {
 	var channelsString = "";
 	// Loop trough each channel and add them to a string
 	for (var i = 0; i < channels.length; i++) {
-		channelsString = channelsString + "\n" + tools.mention(channels[i].channel, 'c') + " [" + channels[i].lang + "]";
+		channelsString = channelsString + "\n" + tools.mention(channels[i].channelID, 'c') + " [" + channels[i].lang + "]";
 	}
 	// If the string is empty, mean there was no channel
 	if (channelsString == "") channelsString = lm.getString("noChannel", lang);
@@ -41,7 +41,7 @@ async function channelAllowed(guildID, message) {
 	const channels = await db.getGuildChannels(guildID);
 	const channelID = message.channel.id;
 	for (var i = 0; i < channels.length; i++) // For each channel
-		if (channels[i].channel == channelID) return true; // If message is sent from allowed channel then return
+		if (channels[i].channelID == channelID) return true; // If message is sent from allowed channel then return
 	return false;
 }
 
@@ -202,10 +202,11 @@ async function checkMessage(lang, message, debug) {
 		result = {values:{"Blacklist":"1000"}}
 	}
 
-	if (!debug) logger.info("Message '" + message.content.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values) + " (" + message.guild.name + ")");
-
-	// Warn the user in the db
-	db.warnUser(guildID, message.author.id);
+	if (!debug) {
+		logger.info("Message '" + message.content.replace(/\n/g, " ") + "' have been warned for " + JSON.stringify(result.values) + " (" + message.guild.name + ")");
+		// Warn the user in the db
+		db.warnUser(guildID, message.author.id);
+	}
 
 	// React in consequence
 	var deleteMessage = await db.getSetting(guildID, "deleteMessage");
@@ -383,12 +384,12 @@ client.on('message', async function (message) {
 
 
     if (messageContent.startsWith(`${prefix}add`)) { // add [ADMIN]
-		db.addGuildChannel(channel, lang);
+		db.addGuildChannel(guild.id, channel, lang);
 		return;
     }
 
     else if (messageContent.startsWith(`${prefix}remove`)) { // remove [ADMIN]
-		db.removeGuildChannel(channel, lang);
+		db.removeGuildChannel(guild.id, channel, lang);
 		return;
     }
 	
@@ -435,7 +436,7 @@ client.on('message', async function (message) {
 
     else if (messageContent.startsWith(`${prefix}delay`)) { // delete delay [ADMIN]
 		if (args[1] <= 30000 && args[1] >= 1000 && tools.isInt(args[1])) {
-			db.setSetting(guild.id, "deleteDelay", args[1]);
+			db.setSetting(guild.id, "deleteDelay", Number(args[1]));
 			tools.sendCatch(channel, lm.getString("deleteDelaySet", lang, {delay:args[1]}));
 		} else {
 			tools.sendCatch(channel, lm.getString("deleteDelayError", lang));
