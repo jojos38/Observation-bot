@@ -659,7 +659,6 @@ async function start() {
     setTimeout(checkConnected, 300000);
     await client.login(config.token);
     apiManager.init(client);
-	db.transfer();
 }
 start();
 // ------- START ------- //
