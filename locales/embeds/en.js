@@ -45,7 +45,7 @@ module.exports = {
         });
         return embed;
     },
-	
+
     getInfoEmbed: function (users, servers, uptime, counter) {
         const embed = new Discord.MessageEmbed({
 			author: {
@@ -54,7 +54,7 @@ module.exports = {
 			},
             color: blue,
             title: "Bot made by jojos38",
-			description: "Special thanks to Perspective API for their API.\nSupport server: https://discord.gg/DXpb9DN\nPatreon: https://www.patreon.com/jojos38\nTipeee: https://fr.tipeee.com/jojos38s-quizzar-bot",
+			description: "Special thanks to Perspective API for their API.\nSupport server: https://discord.gg/DXpb9DN\nDonate: https://paypal.me/wanzera",
 			fields: [
 			  {
 				name: "Servers",

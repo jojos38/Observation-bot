@@ -54,7 +54,7 @@ module.exports = {
 			},
             color: blue,
             title: "Bot crée par jojos38",
-			description: "Merci à Perspective API pour leur API.\nServeur de support: https://discord.gg/DXpb9DN\nPatreon: https://www.patreon.com/jojos38\nTipeee: https://fr.tipeee.com/jojos38s-quizzar-bot",
+			description: "Merci à Perspective API pour leur API.\nServeur de support: https://discord.gg/DXpb9DN\nDonate: https://paypal.me/wanzera",
 			fields: [
 			  {
 				name: "Serveurs",
@@ -80,7 +80,7 @@ module.exports = {
         });
         return embed;
     },
-	
+
     getAdminHelpEmbed: function (prefix) {
         const embed = new Discord.MessageEmbed({
             description: "Un 'channel autorisé' est un channel ou le bot modérera",

@@ -222,17 +222,7 @@ module.exports = {
 	generateToken: async function (guildID, lang) {
 		const token = require('crypto').randomBytes(32).toString('hex');
 		var result = await findOneCatch(col.settings, {setting: "token"});
-		if (result) {
-			const toUpdate = { token: result.token };
-			var result = await updateOneCatch(col.settings, toUpdate, { $set: {value: token, date: Date.now()} });
-			if (result) logger.info("Document token updated successfully");
-			else logger.error("Error while updating token");
-		}
-		else {
-			var result = await insertOneCatch(col.settings, { setting: "token", value: token, date: Date.now() });
-			if (result) logger.info("Document token inserted successfully");
-			else logger.error("Error while inserting token");
-		}
+		db.setSetting(guildID, "token", { token: token, date: Date.now() });
 		return token;
     }
     // ------------------------------------- SOME FUNCTIONS ------------------------------------- //

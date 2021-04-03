@@ -18,9 +18,12 @@
     "url": "https://github.com/jojos38/quizzar-bot"
   },
   "dependencies": {
+    "bufferutil": "^4.0.3",
     "discord.js": "^12.5.1",
+    "erlpack": "github:discord/erlpack",
     "i18n": "^0.13.2",
     "mongodb": "^3.6.4",
-    "perspective-api-client": "github:sloria/perspective-api-client"
+    "perspective-api-client": "github:sloria/perspective-api-client",
+    "utf-8-validate": "^5.0.4"
   }
 }
