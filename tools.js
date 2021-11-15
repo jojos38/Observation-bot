@@ -15,7 +15,7 @@ module.exports = {
 		}
 		return a;
 	},*/
-	
+
 	objSize: function(obj) {
         var size = 0, key;
         for (key in obj) {
@@ -23,7 +23,7 @@ module.exports = {
         }
         return size;
     },
-	
+
 	mention: function(id, type) {
         if (type == 'u') {
             return "<@" + id + ">";
@@ -31,11 +31,11 @@ module.exports = {
             return "<#" + id + ">";
         }
 	},
-	
+
 	isInt: function(value) {
 		return !isNaN(value) && parseInt(Number(value)) == value && !isNaN(parseInt(value, 10));
 	},
-	
+
 	format: function(seconds) {
 		function pad(s){
 			return (s < 10 ? '0' : '') + s;
@@ -49,27 +49,27 @@ module.exports = {
 		var seconds = Math.floor(seconds);
 		return pad(days) + ':' + pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
 	},
-	
+
 	sendCatch: async function(channel, message) {
 		try { return await channel.send(message); }
 		catch (error) { logger.error("Error while sending message"); logger.error(error); return null; }
 	},
-	
+
 	editCatch: async function(message, newContent) {
 		try { await message.edit(newContent); }
 		catch (error) { logger.error("Error while editing message"); logger.error(error); }
 	},
-	
+
 	reactCatch: async function(message, reaction) {
 		try { await message.react(reaction); return true;}
 		catch (error) { logger.error("Error while reacting to message"); logger.error(error); return false;}
 	},
-	
+
 	deleteCatch: async function(message) {
 		try { await message.delete(); return true;}
 		catch (error) { logger.error("Error while deleting message"); logger.error(error); return false;}
 	},
-	
+
 	delay: async function(ms) {
 		// return await for better async stack trace support in case of errors.
 		return await new Promise(resolve => setTimeout(resolve, ms));

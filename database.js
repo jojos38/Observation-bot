@@ -66,9 +66,9 @@ module.exports = {
     // ------------------------------------- INIT AND CLOSE ------------------------------------- //
     init: async function () {
 		logger.info("Database connection...");
-		const url = 'mongodb://' + username + ':' + password + '@' + ip + ':' + port + '/' + database + '?authSource=admin';
+		const url = 'mongodb://' + username + ':' + password + '@' + ip + ':' + port + '/' + database;
 		try  {
-			var err, tempClient = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, poolSize: 1 });
+			var err, tempClient = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 			client = tempClient;
 			mainDB = client.db(database);
 			col.channels = mainDB.collection('channels');

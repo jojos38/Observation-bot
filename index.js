@@ -13,6 +13,8 @@ const ACTIVITY_MESSAGE = "!ohelp";
 global.config = require('./config.json');
 global.db = require('./database.js');
 global.lm = require('./languages-manager.js');
+//const { Client, Intents } = require('discord.js');
+//const client = new Client({ intents: [Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS] });
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const tools = require('./tools.js');
@@ -316,7 +318,7 @@ client.on('messageUpdate', async function (oldMessage, newMessage) {
 
 
 
-client.on('message', async function (message) {
+client.on('message'/*'messageCreate'*/, async function (message) {
 	// Check if the message is not a PM
 	const guild = message.guild;
 	if (!guild) return;
