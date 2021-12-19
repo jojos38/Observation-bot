@@ -22,7 +22,7 @@
     "discord.js": "^12.5.1",
     "i18n": "^0.13.3",
     "mongodb": "^4.1.4",
-    "perspective-api-client": "^3.1.0",
+    "perspective-api-client": "github:jojos38/perspective-api-client",
     "utf-8-validate": "^5.0.7"
   }
 }
