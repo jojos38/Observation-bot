@@ -154,7 +154,7 @@ class PerspectiveManager {
             .toLowerCase()
             .normalize('NFD') // Normalize
             .replace(/[\u0300-\u036f]/g, '') // Remove accents
-            .replace(/[^\p{L}\p{N}\p{P}\p{Z}{\^\$}]/gu, ''); // Remove emojis and special characters
+            .replace(/[^\x00-\x7F]/g, ""); //.replace(/[^\p{L}\p{N}\p{P}\p{Z}{\^\$}]/gu, ''); // Remove emojis and special characters
 
         // Check channel lang
         const channelLang = await this.#db.getChannelLang(guildID, channelID);

@@ -29,7 +29,7 @@ class Observation {
         this.#db = await new databaseManager().init();
         this.#lm = await new languageManager().init();
         this.#pm = await new perspectiveManager(this.#db, this.#config.perspectiveApiKey, this.#lm.getLocales());
-        // this.#ap = new apiManager(this.#client, this.#config.id, this.#config.discordTokens).init();
+        this.#ap = new apiManager(this.#client, this.#config.id, this.#config.discordTokens).init();
         await this.#client.login(this.#config.token);
         this.#client.on('ready', this.#ready.bind(this));
         this.#client.on('disconnect', this.#onDisconnect.bind(this));
@@ -38,6 +38,7 @@ class Observation {
         this.#client.on('messageCreate', this.#onMessageCreate.bind(this));
         this.#client.on('messageUpdate', this.#onMessageUpdate.bind(this));
         this.#client.on('interactionCreate', this.#onInteractionCreate.bind(this));
+	this.#client.user.setPresence({ activities: [{ name: 'New update slash commands' }] });
     }
 
     /**
@@ -166,7 +167,8 @@ class Observation {
                 setTimeout(() => tools.deleteCatch(warnMessage), deleteDelay);
             }
             // If there is a log channel
-            if (logChannel !== '0') {
+	    const channel = logChannel === '0' ? undefined : this.#client.channels.cache.get(logChannel);
+            if (channel) {
                 let warnString = '';
                 for(let type in result.values) warnString = warnString + '- ' + result.values[type].name + ' ' + (result.values[type].value / 10) + '%\n';
                 warnString = warnString.slice(0, -1);
@@ -180,7 +182,7 @@ class Observation {
                     .replace('{{date}}', new Date(message.createdTimestamp).toISOString().replace(/T/, ' ').replace(/\..+/, ''))
                     .replace('{{channelid}}', message.channel.id)
                     .replace('{{channelmention}}', message.channel.toString());
-                await tools.sendCatch(message.channel, {color: 15728640, title: 'Observation', description: messageToSend}, true);
+                await tools.sendCatch(channel, {color: 15728640, title: 'Observation', description: messageToSend}, true);
             }
             // If the original message should be deleted
             if (deleteMessage) await tools.deleteCatch(message);
