@@ -149,10 +149,6 @@ class PerspectiveManager {
         // Values
         const settings = await this.#db.getSettings(guildID, ['ignoreURL', 'whitelist', 'blacklist']);
 
-        // Check message length
-        const messageLength = messageContent.length;
-        if (messageLength < PerspectiveManager.MIN_MSG_LEN || messageLength > PerspectiveManager.MAX_MSG_LEN) return;
-
         // Normalize message
         messageContent = messageContent.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
@@ -183,11 +179,12 @@ class PerspectiveManager {
                 if (word.length > 0 && messageContent.includes(word))
                     return {positive: true, values: {BLACKLIST: {name: 'Blacklist', value: 1000}}}
 
+        // Check message length
+        const messageLength = messageContent.length;
+        if (messageLength < PerspectiveManager.MIN_MSG_LEN || messageLength > PerspectiveManager.MAX_MSG_LEN) return;
+
         // Context for Perspective API, last 5 messages
         const context = this.#cache.get(channelID) || [];
-        const cacheContext = [...context];
-        tools.pushMaxLength(cacheContext, messageContent, 5);
-        this.#cache.set(channelID, cacheContext);
 
         // Check last messages so we don't check spams
         const resultsCache = this.#cache.get(guildID) || [];
@@ -196,9 +193,16 @@ class PerspectiveManager {
         // Check message
         const result = await this.analyzeApi(messageContent, guildID, lang, context, analyze);
 
-        // Cache this result for potential reuse
-        tools.pushMaxLength(resultsCache, {message: messageContent, result: result}, 32);
-        this.#cache.set(guildID, resultsCache);
+	if (result) {
+		// Add to context history
+		const cacheContext = [...context];
+        	tools.pushMaxLength(cacheContext, messageContent, 5);
+        	this.#cache.set(channelID, cacheContext);
+
+		// Cache this result for potential reuse
+        	tools.pushMaxLength(resultsCache, {message: messageContent, result: result}, 32);
+        	this.#cache.set(guildID, resultsCache);
+	}
 
         return result;
     }

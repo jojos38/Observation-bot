@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "bufferutil": "^4.0.5",
     "discord.js": "^13.4.0",
     "i18n": "^0.13.3",
     "mongodb": "^4.2.2",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "utf-8-validate": "^5.0.7"
   },
   "devDependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",
