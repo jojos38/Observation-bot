@@ -1,0 +1,105 @@
+{
+	"langSet": "Langage défini sur {{lang}}",
+	"noPermission": "Il semblerait que tu n'aies pas la permission de faire cela",
+	"noChannel": "Aucun channel n'a été ajouté",
+	"channelAdded": "Le salon {{{channel}}} a été ajouté avec succès",
+	"channelRemoved": "Le salon {{{channel}}} a été supprimé avec succès",
+	"channelLangSet": "Le langage par défaut de {{{channel}}} a été défini sur {{lang}}",
+	"channelNotAdded": "Vous devez ajouter le channel avec /add avant de pouvoir définir son langage",
+	"alreadyAdded": "Le salon {{{channel}}} a déjà été ajouté",
+	"alreadyRemoved": "Le salon {{{channel}}} a déjà été retiré",
+	"logChannelAdded": "Le salon {{{channel}}} a été défini comme salon pour les logs. Utilisez /disablelogs pour le retirer.",
+	"logChannelRemoved": "Le channel pour les logs a été désactivé",
+	"resetted": "Paramètres réinitialisés",
+	"resetCancel": "Opération annulée",
+	"resetConfirm": "Êtes vous sûr de vouloir réinitialiser tous les paramètres?",
+	"listAdded": "Le mot {{word}} a été ajouté à la {{list}}",
+	"listRemoved": "Le mot {{word}} a été retiré de la {{list}}",
+	"listContains": "Erreur, le mot {{word}} est déjà dans la {{list}}",
+	"listDoesntContains": "Erreur, le mot {{word}} n'est pas dans la {{list}}",
+	"listEmpty": "La {{list}} est vide",
+	"listFull": "Erreur, la {{list}} est pleine",
+	"listEmptyWord": "Vous ne pouvez pas insérer de mot vide dans la {{list}}",
+	"listWordLength": "Le mot doit faire entre 3 et 32 caractères",
+	"configConfirm": "Un lien permettant à n'importe qui de configurer le bot va être envoyé!\nSoyez certain d'être dans un channel privé avant de lancer cette commande!\nAppuyez sur confirmer pour continuer.",
+	"configCancel": "Opération annulée",
+	"configLink": "Voici votre lien de configuration, ne donnez pas ce lien publiquement !\nCe dernier est valable 10 minutes.\nSeul le dernier lien généré est valable.",
+	"error": "Une erreur inconnue est survenue, si l'erreur persiste vous pouvez rejoindre le Discord de support du bot.",
+	"embeds": {
+		"help": {
+			"name": "Voici la liste des commandes disponibles :",
+			"fields": [
+				{
+					"name": "**help**",
+					"value": "Affiche l\'aide"
+				},
+				{
+					"name": "**analyze** [text]",
+					"value": "Analyse le message et donne un score"
+				},
+				{
+					"name": "**info**",
+					"value": "Affiche les crédits"
+				},
+				{
+					"name": "**admin**",
+					"value": "Affiche la liste des commandes administrateur\n**Note :** Nécessite la permission de gérer le serveur"
+				}
+			]
+		},
+		"admin": {
+			"name": "Voici la liste des commandes administrateur :",
+			"fields": [
+				{
+					"name": "**config**",
+					"value": "Configurer le bot à travers une interface web"
+				},
+				{
+					"name": "**log**",
+					"value": "Défini le channel comme channel de log"
+				},
+				{
+					"name": "**lang** [language]",
+					"value": "Change la langue du bot (Utilise la norme ISO 631-1, exemple: fr, es ,en)"
+				},
+				{
+					"name": "**add**",
+					"value": "Ajoute un channel qu'Observation vérifiera"
+				},
+				{
+					"name": "**remove**",
+					"value": "Retire un channel des yeux d'Observation"
+				},
+				{
+					"name": "**channellang**",
+					"value": "Défini la langue par défaut d'un channel (Utilise la norme ISO 631-1, exemple: fr, es ,en) (Par défaut: auto)"
+				},
+				{
+					"name": "**reset**",
+					"value": "Supprime toutes les données de configuration du serveur (la liste des channels autorisés etc...)\n**Attention :** Cette commande supprime également toutes les statistiques des utilisateurs !"
+				},
+				{
+					"name": "**channels**",
+					"value": "Affiche la liste des channels qu'Observation vérifie"
+				},
+				{
+					"name": "**whitelist / blacklist** [edit / list] [add / remove] [a word]",
+					"value": "Modifier ou afficher la whitelist / blacklist"
+				}
+			]
+		},
+		"warn": {
+			"results": "Résultat:\n",
+			"flagged": "Votre message a été avertit pour les raisons suivantes :\n"
+		},
+		"info": {
+			"name": "Credit:",
+			"title": "Bot crée par jojos38",
+			"description": "Merci à Perspective API pour leur API.\nServeur de support: https://discord.gg/8kSp7ZsYhD\nDonate: https://paypal.me/wanzera",
+			"servers": "Serveurs",
+			"users": "Utilisateurs",
+			"uptime": "Uptime",
+			"analyzedMessages": "Messages analysés"
+		}
+	}
+}

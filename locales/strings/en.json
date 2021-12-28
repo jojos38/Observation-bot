@@ -1,0 +1,105 @@
+{
+	"langSet": "Language set to {{lang}}",
+	"noPermission": "It seems you don't have permission to do that",
+	"noChannel": "No channel have been added",
+	"channelAdded": "Channel {{{channel}}} was added successfully",
+	"channelRemoved": "Channel {{{channel}}} was removed successfully",
+	"channelLangSet": "{{{channel}}} language was set to {{lang}}",
+	"channelNotAdded": "Please add the channel using /add before setting a language",
+	"alreadyAdded": "{{{channel}}} was already added",
+	"alreadyRemoved": "{{{channel}}} was already removed",
+	"logChannelAdded": "{{{channel}}} has been defined as log channel, use /disablelogs to remove it",
+	"logChannelRemoved": "Logs have been disabled successfully",
+	"resetted": "Data erased successfully",
+	"resetCancel": "Operation cancelled",
+	"resetConfirm": "Are you sure you want to reset all settings?",
+	"listAdded": "The word {{word}} was added to the {{list}}",
+	"listRemoved": "The word {{word}} was removed from the {{list}}",
+	"listContains": "Error, the word {{word}} is already in the {{list}}",
+	"listDoesntContains": "Error, the word {{word}} is not in the {{list}}",
+	"listEmpty": "The {{list}} is empty",
+	"listFull": "Error, the {{list}} is full",
+	"listEmptyWord": "You cannot insert empty words to the {{list}}",
+	"listWordLength": "The word must be at least 3 characters and at most 32 characters",
+	"configConfirm": "**Careful**, anyone who have the link can configure the bot!\nMake sure that you are in a private channel and don't give the link to untrusted people!\nPress confirm to continue.",
+	"configCancel": "Operation cancelled",
+	"configLink": "Here is your config link, do not publicly give this link!\nThe link can be used for 15 minutes.\nOnly the latest generated link is valable.\n{{{link}}}",
+	"error": "An unknown error happened, if the error persists, you can join the support Discord.",
+	"embeds": {
+		"help": {
+			"name": "Here is a list of all commands:",
+			"fields": [
+				{
+					"name": "**help**",
+					"value": " - Show help"
+				},
+				{
+					"name": "**analyze** [text]",
+					"value": " - Analyze your message and give you a score"
+				},
+				{
+					"name": "**info**",
+					"value": " - Show informations about the bot"
+				},
+				{
+					"name": "**admin**",
+					"value": " - Show admin commands\n**Note :** Require 'manage server' permission"
+				}
+			]
+		},
+		"admin": {
+			"name": "Here is a list of admin commands:",
+			"fields": [
+				{
+					"name": "**config**",
+					"value": "Configure the bot trough a web interface"
+				},
+				{
+					"name": "**log**",
+					"value": "Define the channel of the command as the log channel"
+				},
+				{
+					"name": "**lang** [language]",
+					"value": "Change the global language of the bot (Use ISO 631-1, example: fr, es ,en)"
+				},
+				{
+					"name": "**add**",
+					"value": "Add a channel to be scanned and monitored by Observation"
+				},
+				{
+					"name": "**remove**",
+					"value": "Remove a channel from the eyes of Observation"
+				},
+				{
+					"name": "**channellang**",
+					"value": "Set the default lang for a specific channel (Use ISO 631-1, example: fr, es ,en) (Default: auto)"
+				},
+				{
+					"name": "**reset**",
+					"value": "Delete ALL bot data from the server \n**Warning:** This command also deletes all users data!"
+				},
+				{
+					"name": "**channels**",
+					"value": "Show all authorized channels"
+				},
+				{
+					"name": "**whitelist / blacklist** [edit / list] [add / remove] [a word]",
+					"value": "Show the list or add or remove from a list."
+				}
+			]
+		},
+		"warn": {
+			"results": "Results:\n",
+			"flagged": "Your message have been flagged for:\n"
+		},
+		"info": {
+			"name": "Credit:",
+			"title": "Bot made by jojos38",
+			"description": "Special thanks to Perspective API for their API.\nSupport server: https://discord.gg/8kSp7ZsYhD\nDonate: https://paypal.me/wanzera",
+			"servers": "Servers",
+			"users": "Users",
+			"uptime": "Uptime",
+			"analyzedMessages": "Analyzed messages"
+		}
+	}
+}

@@ -17,10 +17,10 @@ Features:
 - Custom prefix
 
 -----
-> - Type !ohelp to start using the bot
-> - The main bot language can be set using !olang, specific languages can be set channel wise using !ochannellang, this should be used if your Discord is using multiple languages!
+> - Type /help to start using the bot
+> - The main bot language can be set using /language, specific languages can be set channel wise using /channellang, this should be used if your Discord is using multiple languages!
 -----
 
-https://discord.gg/DXpb9DN
+https://discord.gg/8kSp7ZsYhD
 772446137499385866
-https://discord.com/oauth2/authorize?client_id=772446137499385866&scope=bot&permissions=388176
+https://discord.com/oauth2/authorize?client_id=772446137499385866&scope=applications.commands%20bot&permissions=277159685126
