@@ -46,7 +46,7 @@ class PerspectiveManager {
                 let body = '';
                 if (res.statusCode !== 200) {
                     logger.warn('Status code ' + res.statusCode + ' was returned');
-                    resolve(null);
+                    resolve();
                 }
                 res.on('data', function (chunk) {
                     body += chunk;
@@ -86,7 +86,7 @@ class PerspectiveManager {
         const result = await this.#request(data);
         if (!result) {
             logger.warn('Message caused error: "' + messageContent + '"');
-            return {positive: false};
+            return;
         }
 
         // Check if the message should be deleted or not
@@ -150,7 +150,11 @@ class PerspectiveManager {
         const settings = await this.#db.getSettings(guildID, ['ignoreURL', 'whitelist', 'blacklist']);
 
         // Normalize message
-        messageContent = messageContent.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        messageContent = messageContent
+            .toLowerCase()
+            .normalize('NFD') // Normalize
+            .replace(/[\u0300-\u036f]/g, '') // Remove accents
+            .replace(/[^\p{L}\p{N}\p{P}\p{Z}{\^\$}]/gu, ''); // Remove emojis and special characters
 
         // Check channel lang
         const channelLang = await this.#db.getChannelLang(guildID, channelID);
@@ -192,16 +196,16 @@ class PerspectiveManager {
         // Check message
         const result = await this.analyzeApi(messageContent, guildID, lang, context, analyze);
 
-	if (result) {
-		// Add to context history
-		const cacheContext = [...context];
-        	tools.pushMaxLength(cacheContext, messageContent, 5);
-        	this.#cache.set(channelID, cacheContext);
+        if (result) {
+            // Add to context history
+            const cacheContext = [...context];
+            tools.pushMaxLength(cacheContext, messageContent, 5);
+            this.#cache.set(channelID, cacheContext);
 
-		// Cache this result for potential reuse
-        	tools.pushMaxLength(resultsCache, {message: messageContent, result: result}, 32);
-        	this.#cache.set(guildID, resultsCache);
-	}
+            // Cache this result for potential reuse
+            tools.pushMaxLength(resultsCache, {message: messageContent, result: result}, 32);
+            this.#cache.set(guildID, resultsCache);
+        }
 
         return result;
     }
