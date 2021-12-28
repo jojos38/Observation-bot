@@ -154,7 +154,7 @@ class Observation {
         if (!message.member || !message.guild || message.author.bot || (!await this.#channelAllowed(message.channel) && !await this.#db.getSetting(guildID, 'global'))) return; // Make all checks
         const lang = await this.#db.getSetting(guildID, 'lang');
         const result = await this.#pm.checkMessage(message.content, guildID, message.channel.id, lang);
-        if (result.positive) {
+        if (result && result.positive) {
             // Values
             logger.info('Message "' + message.content.replace(/\n/g, ' ') + '" have been warned for ' + JSON.stringify(result.values) + ' (' + message.guild.name + ')');
             const {showWarn, deleteMessage, deleteDelay, logChannel, logMessage} = await this.#db.getSettings(guildID, ['showWarn', 'deleteMessage', 'deleteDelay', 'logChannel', 'logMessage']);
