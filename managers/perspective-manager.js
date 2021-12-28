@@ -44,7 +44,10 @@ class PerspectiveManager {
             };
             const req = https.request(options, res => {
                 let body = '';
-                if (res.statusCode !== 200) resolve(null);
+                if (res.statusCode !== 200) {
+                    logger.warn('Status code ' + res.statusCode + ' was returned');
+                    resolve(null);
+                }
                 res.on('data', function (chunk) {
                     body += chunk;
                 });
@@ -71,6 +74,7 @@ class PerspectiveManager {
         // Prepare the data for the request
         let data = triggerTable.scan;
         data.comment.text = messageContent;
+        // delete data.comment.type;
         for (const attribute in offsetTable) if (offsetTable[attribute].enabled && attribute !== 'AVERAGE') data.requestedAttributes[attribute] = {};
         for (const message of context) data.context.entries.push({text: message, type: 'PLAIN_TEXT'})
         if (data.context.entries.length === 0) delete data.context;
