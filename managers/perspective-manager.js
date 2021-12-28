@@ -154,7 +154,6 @@ class PerspectiveManager {
 
         // Check channel lang
         const channelLang = await this.#db.getChannelLang(guildID, channelID);
-        console.log(channelLang);
         if (channelLang !== 'auto') lang = channelLang;
 
         // Remove emotes, mentions and emojis from the message

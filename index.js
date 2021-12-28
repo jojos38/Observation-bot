@@ -254,7 +254,6 @@ class Observation {
                     const guildsCount = guilds.size;
                     let usersCount = 0;
                     guilds.forEach(g => {usersCount += g.memberCount;});
-                    console.log(this.#lm.getEmbed('info', lang, {usersCount, guildsCount, uptime, counter}));
                     await tools.replyCatch(interaction, this.#lm.getEmbed('info', lang, {usersCount, guildsCount, uptime, counter}), true, false);
                     break;
             }
