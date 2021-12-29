@@ -38,7 +38,7 @@ class Observation {
         this.#client.on('messageCreate', this.#onMessageCreate.bind(this));
         this.#client.on('messageUpdate', this.#onMessageUpdate.bind(this));
         this.#client.on('interactionCreate', this.#onInteractionCreate.bind(this));
-	this.#client.user.setPresence({ activities: [{ name: 'New update slash commands' }] });
+	this.#client.user.setPresence({ activities: [{ name: 'Please re-invite the bot if you are missing slash commands' }] });
     }
 
     /**
@@ -221,18 +221,18 @@ class Observation {
             switch (customID) {
                 case 'resetConfirm':
                     await this.#db.resetGuildSettings(interaction.guildId);
-                    await tools.replyCatch(interaction, this.#lm.getString('resetted', lang), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('resetted', lang), 0, true);
                     break;
                 case 'resetCancel':
-                    await tools.replyCatch(interaction, this.#lm.getString('resetCancel', lang), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('resetCancel', lang), 0, true);
                     break;
                 case 'configConfirm':
                     const token = await this.#db.generateToken(interaction.guildId);
                     const link = 'https://observation.ddns.net/?tok=' + token + '&sid=' + interaction.guildId;
-                    await tools.replyCatch(interaction, this.#lm.getString('configLink', lang, {link: link}), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('configLink', lang, {link: link}), 0, true);
                     break;
                 case 'configCancel':
-                    await tools.replyCatch(interaction, this.#lm.getString('configCancel', lang), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('configCancel', lang), 0, true);
                     break;
             }
         }
@@ -244,10 +244,10 @@ class Observation {
             // User commands
             switch (cmd) {
                 case 'help':
-                    await tools.replyCatch(interaction, this.#lm.getEmbed('help', lang, {}), true, true);
+                    await tools.replyCatch(interaction, this.#lm.getEmbed('help', lang, {}), 1, true);
                     break;
                 case 'admin':
-                    await tools.replyCatch(interaction, this.#lm.getEmbed('admin', lang, {}), true, true);
+                    await tools.replyCatch(interaction, this.#lm.getEmbed('admin', lang, {}), 1, true);
                     break;
                 case 'info':
                     const guilds = this.#client.guilds.cache;
@@ -256,18 +256,18 @@ class Observation {
                     const guildsCount = guilds.size;
                     let usersCount = 0;
                     guilds.forEach(g => {usersCount += g.memberCount;});
-                    await tools.replyCatch(interaction, this.#lm.getEmbed('info', lang, {usersCount, guildsCount, uptime, counter}), true, false);
+                    await tools.replyCatch(interaction, this.#lm.getEmbed('info', lang, {usersCount, guildsCount, uptime, counter}), 1, false);
                     break;
             }
 
             // Admin commands
             if (!this.#hasPermission(interaction.member)) {
-                await tools.replyCatch(interaction, this.#lm.getString('noPermission', lang), false, true);
+                await tools.replyCatch(interaction, this.#lm.getString('noPermission', lang), 0, true);
                 return
             }
             switch(cmd) {
                 case 'channels':
-                    await tools.replyCatch(interaction, await this.#getChannelsString(interaction.guildId, lang), false, true);
+                    await tools.replyCatch(interaction, await this.#getChannelsString(interaction.guildId, lang), 0, true);
                     break;
                 case 'add':
                 case 'remove':
@@ -282,37 +282,37 @@ class Observation {
                     const word = interaction.options.getString('word');
                     if(choice === 'list') {
                         let wordsList = await this.#db.getSetting(interaction.guildId, listType);
-                        if (wordsList.length > 0) await tools.replyCatch(interaction, wordsList.join(', '), false, true);
-                        else await tools.replyCatch(interaction, this.#lm.getString('listEmpty', lang, {list: listType}), false, true);
+                        if (wordsList.length > 0) await tools.replyCatch(interaction, wordsList.join(', '), 0, true);
+                        else await tools.replyCatch(interaction, this.#lm.getString('listEmpty', lang, {list: listType}), 0, true);
                     }
                     else {
                         const result = await this.#updateList(interaction.guildId, listType, choice, word);
-                        await tools.replyCatch(interaction, this.#lm.getString(result, lang, {word: word, list: listType}), false, true);
+                        await tools.replyCatch(interaction, this.#lm.getString(result, lang, {word: word, list: listType}), 0, true);
                     }
                     break;
                 }
                 case 'language': {
                     const botLang = interaction.options.getString('language');
                     await this.#db.setSetting(interaction.guildId, 'lang', botLang);
-                    await tools.replyCatch(interaction, this.#lm.getString('langSet', botLang, {lang: botLang}), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('langSet', botLang, {lang: botLang}), 0, true);
                     break;
                 }
                 case 'log': {
                     const channel = interaction.options.getChannel('channel');
                     await this.#db.setSetting(interaction.guildId, 'logChannel', channel.id);
-                    await tools.replyCatch(interaction, this.#lm.getString('logChannelAdded', lang, {channel: '<#' + channel.id + '>'}), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('logChannelAdded', lang, {channel: '<#' + channel.id + '>'}), 0, true);
                     break;
                 }
                 case 'disablelogs': {
                     await this.#db.setSetting(interaction.guildId, 'logChannel', '0');
-                    await tools.replyCatch(interaction, this.#lm.getString('logChannelRemoved', lang), false, true);
+                    await tools.replyCatch(interaction, this.#lm.getString('logChannelRemoved', lang), 0, true);
                     break;
                 }
                 case 'analyze': {
                     const messageContent = interaction.options.getString('message');
                     const result = await this.#pm.checkMessage(messageContent, interaction.guild.id, interaction.channel.id, lang, true);
                     const nickname = interaction.member.nickname || interaction.user.username;
-                    await tools.replyCatch(interaction, this.#lm.getEmbed('warn', lang, {result: result, nickname: nickname, analyze: true}), true, false);
+                    await tools.replyCatch(interaction, this.#lm.getEmbed('warn', lang, {result: result, nickname: nickname, analyze: true}), 1, false);
                     break;
                 }
                 case 'channellang': {
@@ -320,26 +320,26 @@ class Observation {
                     const channelLang = interaction.options.getString('language');
                     if(await this.#channelAllowed(channel)) {
                         await this.#db.setChannelLang(interaction.guildId, channel.id, channelLang);
-                        await tools.replyCatch(interaction, this.#lm.getString('channelLangSet', lang, {channel: '<#' + channel.id + '>', lang: channelLang}), false, true);
+                        await tools.replyCatch(interaction, this.#lm.getString('channelLangSet', lang, {channel: '<#' + channel.id + '>', lang: channelLang}), 0, true);
                     } else {
-                        await tools.replyCatch(interaction, this.#lm.getString('channelNotAdded', lang, {channel: '<#' + channel.id + '>'}), false, true);
+                        await tools.replyCatch(interaction, this.#lm.getString('channelNotAdded', lang, {channel: '<#' + channel.id + '>'}), 0, true);
                     }
                     break;
                 }
                 case 'config':
-                    await interaction.reply({
-                        content: this.#lm.getString('configConfirm', lang),
+                    await tools.replyCatch(interaction, {
+			content: this.#lm.getString('configConfirm', lang),
                         components: [{
-                            type: 1,
-                            components: [
-                                {type: 2, label: 'Confirm', style: 4, custom_id: 'configConfirm'},
-                                {type: 2, label: 'Cancel', style: 2, custom_id: 'configCancel'}
-                            ]
-                        }]
-                    });
+                            	type: 1,
+                            	components: [
+                                	{type: 2, label: 'Confirm', style: 4, custom_id: 'configConfirm'},
+                                	{type: 2, label: 'Cancel', style: 2, custom_id: 'configCancel'}
+                        	]
+                    	}]
+                    }, 2, true);
                     break;
                 case 'reset':
-                    await interaction.reply({
+                    await tools.replyCatch(interaction, {
                         content: this.#lm.getString('resetConfirm', lang),
                         components: [{
                             type: 1,
@@ -348,7 +348,7 @@ class Observation {
                                 {type: 2, label: 'Cancel', style: 2, custom_id: 'resetCancel'}
                             ]
                         }]
-                    });
+                    }, 2, true);
                     break;
             }
         }

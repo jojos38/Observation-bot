@@ -11,8 +11,10 @@ module.exports = {
 		catch (error) { logger.warn("Error while sending message"); logger.error(error); return null; }
 	},
 
-	replyCatch: async function(interaction, message, embed, ephemeral) {
-		const messageObj = embed ? { embeds: [message], ephemeral: ephemeral } : { content: message, ephemeral: ephemeral };
+	replyCatch: async function(interaction, message, type, ephemeral) {
+		if (type == 0) var messageObj = { content: message, ephemeral: ephemeral };
+		else if (type == 1) var messageObj = { embeds: [message], ephemeral: ephemeral };
+		else if (type == 2) { var messageObj = message; messageObj.ephemeral = ephemeral; }
 		try { return await interaction.reply(messageObj) }
 		catch (error) { logger.warn("Error while replying interaction"); logger.error(error); return null; }
 	},

@@ -86,12 +86,12 @@ class ApiManager {
 			{guildCount: guildCount},
 			this.#tokens.discordbots
 		);
-		this.#post(
+		/*this.#post(
 			'bots.ondiscord.xyz',
 			'/bot-api/bots/' + this.#selfID + '/guilds',
 			{guildCount: guildCount},
 			this.#tokens.botsondiscord
-		);
+		);*/
 		this.#post(
 			'discord.boats',
 			'/api/bot/' + this.#selfID,
