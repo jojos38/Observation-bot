@@ -256,7 +256,7 @@ class Database {
         // If settings didn't exist in database
         for (const tmpSetting of settingsNames) {
             // Add the missing settings and cache them
-            if (!returnSettings[tmpSetting]) returnSettings[tmpSetting] = await this.#insertMissingSetting(guildID, tmpSetting);
+            if (returnSettings[tmpSetting] === undefined) returnSettings[tmpSetting] = await this.#insertMissingSetting(guildID, tmpSetting);
             this.#cache.set(guildID + tmpSetting, returnSettings[tmpSetting]);
         }
         return returnSettings;

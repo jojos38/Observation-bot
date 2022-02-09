@@ -38,7 +38,7 @@ class Observation {
         this.#client.on('messageCreate', this.#onMessageCreate.bind(this));
         this.#client.on('messageUpdate', this.#onMessageUpdate.bind(this));
         this.#client.on('interactionCreate', this.#onInteractionCreate.bind(this));
-	this.#client.user.setPresence({ activities: [{ name: 'Please re-invite the bot if you are missing slash commands' }] });
+	this.#client.user.setPresence({ activities: [{ name: '/help' }] });
     }
 
     /**
@@ -218,6 +218,11 @@ class Observation {
         if (interaction.isButton()) {
             const customID = interaction.customId;
             const lang = await this.#db.getSetting(interaction.guildId, 'lang');
+	    // Admin commands
+            if (!this.#hasPermission(interaction.member)) {
+                await tools.replyCatch(interaction, this.#lm.getString('noPermission', lang), 0, true);
+                return
+            }
             switch (customID) {
                 case 'resetConfirm':
                     await this.#db.resetGuildSettings(interaction.guildId);
