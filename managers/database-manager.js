@@ -8,6 +8,7 @@
 // ---------------------------- SOME VARIABLES ---------------------------- //
 const {database, username, password, ip, port} = require('../dbconfig.json');
 const MongoClient = require('mongodb').MongoClient;
+const Long = require('mongodb').Long;
 const logger = require('../logger.js');
 const NodeCache = require('node-cache');
 // ---------------------------- SOME VARIABLES ---------------------------- //
@@ -268,10 +269,10 @@ class Database {
     async setSetting(guildID, settingName, value) {
         const settingToFind = { guildID: guildID, setting: settingName };
         if (await Database.#updateOne(this.#col.settings, settingToFind, { $set: { value: value } }, { upsert: true })) {
-            logger.info('Setting ' + settingName + ' successfully updated to ' + value);
+            logger.info('Setting ' + settingName + ' successfully updated to ' + JSON.stringify(value));
             this.#cache.set(guildID + settingName, value);
         }
-        else logger.error('Error while updating ' + settingName + ' to ' + value);
+        else logger.error('Error while updating ' + settingName + ' to ' + JSON.stringify(value));
     }
 
     /**
@@ -355,7 +356,7 @@ class Database {
      */
     async generateToken(guildID) {
         const token = require('crypto').randomBytes(32).toString('hex');
-        await this.setSetting(guildID, 'token', {token: token, date: Date.now()});
+        await this.setSetting(guildID, 'token', {token: token, date: Long.fromNumber(Date.now())});
         this.#disabledCaches.push({guildID: guildID, time: Date.now()});
         logger.info("Cache disabled for 15 minutes for " + guildID)
         return token;
