@@ -280,7 +280,7 @@ class Database {
      * @returns {Promise<*>}
      */
     async getTriggerTable(lang) {
-        return (await Database.#findOne(this.#col.defaultSettings, { setting: 'triggerTable', lang: lang })).value;
+        return (await Database.#findOne(this.#col.defaultSettings, { setting: lang + 'TriggerTable' })).value;
     }
 
     /**
