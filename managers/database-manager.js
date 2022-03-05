@@ -342,7 +342,7 @@ class Database {
             if (result.warns.length > 256) result.warns = Database.#removeSmallest(result.warns);
             const ok = await Database.#updateOne(this.#col.usersGuild, { guildID: guildID, userID: userID }, { $set: {warns: result.warns} });
             if (ok) logger.info("User updated and warned successfully");
-            else logger.error("Errir while updating and warning user");
+            else logger.error("Error while updating and warning user");
         }
         else {
             const ok = await Database.#insertOne(this.#col.usersGuild, { guildID: guildID, userID: userID, warns: [Date.now()] });
