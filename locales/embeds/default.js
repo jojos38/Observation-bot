@@ -79,7 +79,7 @@ module.exports = {
             return {
                 color: red,
                 title: params.nickname,
-                description: (params.analyze ? t.results : t.flagged) + warnString
+                description: (params.analyze ? params.message + '\n' + t.results : t.flagged) + warnString
             }
         },
     }

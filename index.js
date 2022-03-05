@@ -317,7 +317,7 @@ class Observation {
                     const messageContent = interaction.options.getString('message');
                     const result = await this.#pm.checkMessage(messageContent, interaction.guild.id, interaction.channel.id, lang, true);
                     const nickname = interaction.member.nickname || interaction.user.username;
-                    await tools.replyCatch(interaction, this.#lm.getEmbed('warn', lang, {result: result, nickname: nickname, analyze: true}), 1, false);
+                    await tools.replyCatch(interaction, this.#lm.getEmbed('warn', lang, {result: result, nickname: nickname, message: messageContent, analyze: true}), 1, false);
                     break;
                 }
                 case 'channellang': {
